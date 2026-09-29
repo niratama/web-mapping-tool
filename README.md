@@ -1,9 +1,9 @@
 # GridMap Studio (方眼紙マッピングツール)
 
-[![GitHub Pages](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2563eb?style=flat-square&logo=github)](https://niratama.github.io/web-mapping-tool/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-公開サイトで試す-2563eb?style=flat-square&logo=googlechrome&logoColor=white)](http://nira.poi.jp/web-mapping-tool/)
 
 > 🚀 **オンラインですぐに使える Web版 はこちら**:  
-> 👉 **[https://niratama.github.io/web-mapping-tool/](https://niratama.github.io/web-mapping-tool/)**
+> 👉 **[http://nira.poi.jp/web-mapping-tool/](http://nira.poi.jp/web-mapping-tool/)**
 
 Webブラウザ上で軽快に動作する、方眼紙ベースのマップ作成・編集ツールです。
 サーバーサイドは一切不要で、純粋な HTML5 + CSS3 + Vanilla JavaScript で構築されています。
