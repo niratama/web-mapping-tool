@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方眼紙マッピングツール (GridMap Studio)</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Header / Toolbar -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="3" y1="15" x2="21" y2="15"/>
+          <line x1="9" y1="3" x2="9" y2="21"/>
+          <line x1="15" y1="3" x2="15" y2="21"/>
+        </svg>
+      </div>
+      <span>GridMap Studio</span>
+    </div>
+
+    <!-- Main Tools -->
+    <div class="toolbar-group">
+      <button class="tool-btn active" id="tool-select" data-tool="select" title="選択・移動・変形 (V)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+        </svg>
+        <span>選択</span>
+      </button>
+
+      <button class="tool-btn" id="tool-floor" data-tool="floor" title="床・外周壁塗りつぶし (F)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 11L12 4 4 12l7 7 8-8z"/>
+          <path d="M5 2l5 5"/>
+          <path d="M2 13h15"/>
+          <circle cx="20" cy="20" r="2.5" fill="currentColor"/>
+        </svg>
+        <span>床・壁塗り</span>
+      </button>
+
+      <button class="tool-btn" id="tool-wall" data-tool="wall" title="交点接続 自由壁ツール (W)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="20" x2="20" y2="4"/>
+          <circle cx="4" cy="20" r="3"/>
+          <circle cx="20" cy="4" r="3"/>
+        </svg>
+        <span>壁線</span>
+      </button>
+
+      <button class="tool-btn" id="tool-opening" data-tool="opening" title="ドア・窓の配置 (D)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
+          <path d="M14 12h.01"/>
+          <path d="M4 21h16"/>
+          <path d="M14 7l6 2v12"/>
+        </svg>
+        <span>ドア・窓</span>
+      </button>
+
+      <button class="tool-btn" id="tool-eraser" data-tool="eraser" title="消しゴム (E)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L18 15"/>
+        </svg>
+        <span>消しゴム</span>
+      </button>
+
+      <select id="toolbar-eraser-target" class="prop-input" style="display: none; height: 32px; padding: 2px 6px; font-size: 0.8rem; background: var(--bg-secondary); margin-left: -2px;" title="消去対象フィルター">
+        <option value="all">対象: すべて</option>
+        <option value="objects">対象: オブジェクトのみ</option>
+        <option value="walls">対象: 壁・開口部のみ</option>
+        <option value="floors">対象: 床のみ</option>
+      </select>
+
+      <button class="tool-btn" id="tool-hand" data-tool="hand" title="画面移動 / パン (Space+ドラッグ / H)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 11V6a2 2 0 0 0-4 0v5"/>
+          <path d="M14 10V4a2 2 0 0 0-4 0v6"/>
+          <path d="M10 10.5V6a2 2 0 0 0-4 0v8"/>
+          <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+        </svg>
+        <span>手のひら</span>
+      </button>
+    </div>
+
+    <!-- History & Edit Controls -->
+    <div class="toolbar-group">
+      <div class="separator"></div>
+
+      <button class="tool-btn" id="btn-undo" title="元に戻す (Ctrl+Z)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 7v6h6"/>
+          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+        </svg>
+      </button>
+
+      <button class="tool-btn" id="btn-redo" title="やり直す (Ctrl+Y)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 7v6h-6"/>
+          <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/>
+        </svg>
+      </button>
+
+      <div class="separator"></div>
+
+      <button class="tool-btn" id="btn-grid-settings" title="グリッド設定">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        <span>グリッド</span>
+      </button>
+
+      <button class="tool-btn" id="btn-shortcuts" title="ショートカットキー設定">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10"/>
+        </svg>
+        <span>キー設定</span>
+      </button>
+    </div>
+
+    <!-- Export & File Actions -->
+    <div class="toolbar-group">
+      <div class="separator"></div>
+
+      <button class="tool-btn" id="btn-new-map" title="新規マップ作成（現在のマップをクリア）">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+        <span>新規</span>
+      </button>
+
+      <button class="tool-btn" id="btn-save-json" title="マップ保存 (JSON)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        <span>保存</span>
+      </button>
+
+      <button class="tool-btn" id="btn-load-json" title="マップ読み込み (JSON)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>開く</span>
+      </button>
+      <input type="file" id="file-input-map" accept=".json" style="display: none;">
+
+      <button class="tool-btn" id="btn-export-image" title="画像エクスポート (PNG / SVG)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span>画像出力</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- App Main Body -->
+  <div class="app-container">
+
+    <!-- Left Side Panel: Palette & Asset Library -->
+    <div class="side-panel left">
+      <div class="panel-header">
+        <span>パーツパレット</span>
+        <button class="btn-secondary" id="btn-new-object" style="flex: none; padding: 3px 8px;">＋新規</button>
+      </div>
+
+      <div class="panel-content">
+        <!-- Palette Tabs -->
+        <div class="palette-tabs" id="palette-tabs-container">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Library Import / Export Actions -->
+        <div class="palette-actions">
+          <button class="btn-secondary" id="btn-export-library" title="現在のグループをライブラリ(JSON)として保存">ライブラリ保存</button>
+          <button class="btn-secondary" id="btn-import-library" title="ライブラリ(JSON)を読み込み">読込</button>
+          <input type="file" id="file-input-library" accept=".json" style="display: none;">
+        </div>
+
+        <!-- Palette Item Grid -->
+        <div class="palette-grid" id="palette-items-container">
+          <!-- Dynamically populated with draggable items -->
+        </div>
+
+        <div style="margin-top: auto; font-size: 0.75rem; color: var(--text-muted); text-align: center;">
+          アイテムをマップにドラッグ＆ドロップ、またはクリックして配置
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Canvas Area -->
+    <div class="canvas-wrapper" id="canvas-container">
+      <canvas id="mapCanvas"></canvas>
+
+      <!-- Viewport Controls (Zoom / Center) -->
+      <div class="viewport-controls">
+        <button class="viewport-btn" id="btn-zoom-in" title="ズームイン (＋)">+</button>
+        <div class="zoom-indicator" id="zoom-indicator" title="クリックで100%にリセット">100%</div>
+        <button class="viewport-btn" id="btn-zoom-out" title="ズームアウト (－)">−</button>
+        <button class="viewport-btn" id="btn-zoom-fit" title="全体を表示">⛶</button>
+      </div>
+
+      <!-- Bottom Hotbar (Quick Slots 1-0) -->
+      <div class="hotbar" id="hotbar-container">
+        <!-- 10 slots populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Right Side Panel: Properties & Selection Details -->
+    <div class="side-panel right" id="properties-panel">
+      <div class="panel-header">
+        <span id="properties-panel-title">ツール設定 / プロパティ</span>
+        <button class="tool-btn danger" id="btn-delete-selected" title="選択中の要素を削除 (Delete)" style="padding: 2px 6px; display: none;">削除</button>
+      </div>
+
+      <div class="panel-content" id="properties-content">
+        <!-- Floor & Wall Paint Style Panel (Tool Properties) -->
+        <div id="paint-style-panel" style="display: none;">
+          <div class="prop-title" style="margin-bottom: 6px;">床・壁塗りの設定</div>
+
+          <!-- Floor Fill Mode (Brush / Rect / Bucket) -->
+          <div class="prop-group" style="margin-bottom: 8px;">
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">塗り方モード:</div>
+            <div class="floor-mode-group">
+              <button type="button" class="floor-mode-btn active" id="btn-floor-mode-brush" title="マス目をドラッグして1マスずつ塗る (Shift押下で矩形)">
+                🖌️ ブラシ
+              </button>
+              <button type="button" class="floor-mode-btn" id="btn-floor-mode-rect" title="対角線をドラッグして四角形に部屋を作成">
+                ⬛ 矩形
+              </button>
+              <button type="button" class="floor-mode-btn" id="btn-floor-mode-bucket" title="クリックした接続部屋の床色を一括塗り替え">
+                🪣 バケツ
+              </button>
+            </div>
+          </div>
+
+          <div class="prop-row" style="margin-bottom: 2px;">
+            <label>床色:</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="paint-floor-color" class="prop-input" value="#e2e8f0" title="カスタム色選択">
+              <span id="paint-floor-color-val" style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">#e2e8f0</span>
+              <button class="eyedropper-btn" id="btn-eyedropper-floor" title="マップ上の床・壁・物から色をスポイト取得">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 11l-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l5 5a2.12 2.12 0 0 0 3 0L19 11z"/>
+                  <path d="M5 21h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <!-- Floor Color Presets -->
+          <div id="floor-color-presets" class="color-presets-row"></div>
+
+          <div class="prop-row" style="margin-bottom: 6px;">
+            <label>床テクスチャ:</label>
+            <select id="paint-floor-texture" class="prop-input">
+              <option value="none">単色</option>
+              <option value="wood">木目フローリング</option>
+              <option value="tile">スクエアタイル</option>
+              <option value="stone">石畳</option>
+              <option value="tatami">畳</option>
+              <option value="carpet">カーペット</option>
+            </select>
+          </div>
+
+          <!-- Bulk Floor Color Replace Button -->
+          <div class="prop-row" style="margin-top: 4px; margin-bottom: 12px;">
+            <button type="button" class="btn-secondary" id="btn-replace-all-floors" style="width: 100%; font-size: 0.78rem; padding: 6px 4px;" title="マップ上のすべての床を現在の色・テクスチャに一括置換">
+              🗺️ すべての床をこの色に変更
+            </button>
+          </div>
+
+          <div class="prop-title" style="margin-bottom: 6px; padding-top: 6px; border-top: 1px solid var(--border-color);">壁の設定</div>
+
+          <div class="prop-row" style="margin-bottom: 2px;">
+            <label>壁色:</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="paint-wall-color" class="prop-input" value="#1e293b" title="カスタム色選択">
+              <span id="paint-wall-color-val" style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">#1e293b</span>
+              <button class="eyedropper-btn" id="btn-eyedropper-wall" title="マップ上の床・壁・物から色をスポイト取得">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 11l-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l5 5a2.12 2.12 0 0 0 3 0L19 11z"/>
+                  <path d="M5 21h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <!-- Wall Color Presets -->
+          <div id="wall-color-presets" class="color-presets-row"></div>
+
+          <div class="prop-row" style="margin-bottom: 6px;">
+            <label>壁テクスチャ:</label>
+            <select id="paint-wall-texture" class="prop-input">
+              <option value="none">通常実線</option>
+              <option value="brick">レンガ調</option>
+              <option value="wood-wall">木製壁</option>
+              <option value="concrete">コンクリート</option>
+            </select>
+          </div>
+
+          <div class="prop-row" style="margin-top: 6px;">
+            <label style="width: auto; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+              <input type="checkbox" id="paint-auto-perimeter-wall" checked> 床塗りと同時に外周壁を自動生成
+            </label>
+          </div>
+        </div>
+
+        <!-- Eraser Options Panel (Tool Properties) -->
+        <div id="eraser-style-panel" style="display: none;">
+          <div class="prop-title" style="margin-bottom: 6px;">消しゴムの設定</div>
+          <div class="prop-row" style="margin-bottom: 6px;">
+            <label style="width: auto; flex: 1;">対象フィルター:</label>
+            <select id="eraser-target-filter" class="prop-input" style="flex: 2;">
+              <option value="all">すべて</option>
+              <option value="objects">オブジェクトのみ</option>
+              <option value="walls">壁・開口部のみ</option>
+              <option value="floors">床のみ</option>
+            </select>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; padding: 6px; background: var(--bg-secondary); border-radius: 4px;">
+            💡 <strong>ヒント</strong>:<br>
+            ・「オブジェクトのみ」: 壁や床を消さずに家具だけ消去<br>
+            ・「壁・開口部のみ」: 家具や床を保護して壁だけ修正<br>
+            ・「床のみ」: 壁や家具を保護して床セルだけ消去
+          </div>
+        </div>
+
+        <!-- Opening (Door / Window) Tool Properties Panel -->
+        <div id="opening-style-panel" style="display: none;">
+          <div class="prop-title" style="margin-bottom: 6px;">ドア・窓の配置設定</div>
+          <div class="prop-row">
+            <label>タイプ:</label>
+            <select id="tool-op-type" class="prop-input">
+              <option value="door-single">片開きドア</option>
+              <option value="door-double">両開きドア</option>
+              <option value="window">窓</option>
+              <option value="arch">開口部（通路）</option>
+            </select>
+          </div>
+          <div class="prop-row">
+            <label>幅 (px):</label>
+            <input type="number" id="tool-op-width" class="prop-input" value="40" step="20" min="20" max="200">
+          </div>
+          <div class="prop-row" style="margin-bottom: 2px;">
+            <label>線色:</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="tool-op-color" class="prop-input" value="#ca8a04">
+              <button class="eyedropper-btn" id="tool-eyedropper-op" title="色をスポイト取得">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 11l-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l5 5a2.12 2.12 0 0 0 3 0L19 11z"/>
+                  <path d="M5 21h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="tool-op-presets" class="color-presets-row" style="padding-left: 60px;"></div>
+          <div class="prop-row" style="margin-top: 8px; gap: 4px;">
+            <button type="button" class="btn-secondary" id="tool-op-flip-swing-btn" style="flex: 1;" title="内開き・外開きの向きを反転 (R)">🔄 開き向き反転 (R)</button>
+            <button type="button" class="btn-secondary" id="tool-op-flip-hinge-btn" style="flex: 1;" title="ヒンジの左右位置を反転">↔️ 左右反転</button>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; margin-top: 10px; padding: 6px; background: var(--bg-secondary); border-radius: 4px;">
+            💡 <strong>ヒント</strong>:<br>
+            ・壁の近くにカーソルを合わせると自動で壁にスナップします<br>
+            ・配置前に <strong>Rキー</strong> を押すと開き向き（内外・左右）を回転できます
+          </div>
+        </div>
+
+        <!-- Selection Properties Area (Object, Opening, Wall details) -->
+        <div id="selection-properties-container">
+          <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 20px;">
+            オブジェクトや壁を選択すると詳細が表示されます
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Modals -->
+
+  <!-- Modal 1: Create New Object -->
+  <div class="modal-overlay" id="modal-new-object">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>新規オブジェクト作成</span>
+        <button class="modal-close" data-close="modal-new-object">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="prop-row">
+          <label>名前:</label>
+          <input type="text" id="obj-create-name" class="prop-input" value="新規パーツ">
+        </div>
+
+        <div class="prop-row">
+          <label>グループ:</label>
+          <select id="obj-create-group" class="prop-input">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div class="prop-title" style="margin-top: 6px;">形状タイプ</div>
+        <div class="prop-row">
+          <label><input type="radio" name="shape-type" value="rect" checked> 矩形</label>
+          <label><input type="radio" name="shape-type" value="cells"> セル塗りつぶし（自由形状）</label>
+        </div>
+
+        <!-- Rect Settings -->
+        <div id="shape-rect-controls">
+          <div class="prop-row">
+            <label>幅 (グリッド):</label>
+            <input type="number" id="obj-create-w" class="prop-input" value="2" min="1" max="20">
+            <label style="margin-left: 8px;">高さ:</label>
+            <input type="number" id="obj-create-h" class="prop-input" value="2" min="1" max="20">
+          </div>
+        </div>
+
+        <!-- Cells Matrix Settings -->
+        <div id="shape-cells-controls" style="display: none;">
+          <div class="prop-row" style="margin-bottom: 6px; gap: 6px; align-items: center;">
+            <label style="width: auto; font-size: 0.8rem;">サイズ:</label>
+            <select id="shape-matrix-size" class="prop-input" style="width: auto; height: 26px; padding: 2px 6px; font-size: 0.8rem;">
+              <option value="4">4 × 4</option>
+              <option value="6">6 × 6</option>
+              <option value="8" selected>8 × 8 (標準)</option>
+              <option value="10">10 × 10</option>
+              <option value="12">12 × 12</option>
+              <option value="16">16 × 16 (高解像度)</option>
+            </select>
+            <button type="button" class="btn-secondary" id="btn-clear-shape-matrix" style="padding: 2px 8px; font-size: 0.75rem; height: 26px;">全消去</button>
+            <button type="button" class="btn-secondary" id="btn-fill-shape-matrix" style="padding: 2px 8px; font-size: 0.75rem; height: 26px;">全塗り</button>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;">
+            マスをクリックまたはドラッグして自由形状を塗り描き:
+          </div>
+          <div class="shape-matrix-wrapper" style="max-height: 280px; overflow: auto; padding: 4px; background: var(--bg-secondary); border-radius: 6px; display: flex; justify-content: center;">
+            <div class="shape-matrix-grid" id="shape-matrix-grid">
+              <!-- Dynamic interactive cells -->
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-title" style="margin-top: 6px;">塗りつぶし & スタイル</div>
+        <div class="prop-row">
+          <label><input type="radio" name="fill-type" value="color" checked> 単色</label>
+          <label><input type="radio" name="fill-type" value="image"> 画像テクスチャ</label>
+        </div>
+
+        <div id="fill-color-controls">
+          <div class="prop-row" style="margin-bottom: 2px;">
+            <label>塗り色:</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="obj-create-color" class="prop-input" value="#3b82f6">
+              <button type="button" class="eyedropper-btn" id="btn-eyedropper-obj-create-color" title="塗り色をスポイト取得">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 11l-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l5 5a2.12 2.12 0 0 0 3 0L19 11z"/>
+                  <path d="M5 21h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="obj-create-color-presets" class="color-presets-row" style="padding-left: 60px; margin-bottom: 6px;"></div>
+
+          <div class="prop-row" style="margin-bottom: 2px;">
+            <label>枠線色:</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="obj-create-stroke" class="prop-input" value="#1d4ed8">
+              <button type="button" class="eyedropper-btn" id="btn-eyedropper-obj-create-stroke" title="枠線色をスポイト取得">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 11l-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l5 5a2.12 2.12 0 0 0 3 0L19 11z"/>
+                  <path d="M5 21h14"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="obj-create-stroke-presets" class="color-presets-row" style="padding-left: 60px;"></div>
+        </div>
+
+        <div id="fill-image-controls" style="display: none;">
+          <div class="prop-row">
+            <label>画像:</label>
+            <input type="file" id="obj-create-image" accept="image/*" class="prop-input">
+          </div>
+          <div id="image-preview" style="width: 60px; height: 60px; background-size: cover; border-radius: 4px; border: 1px solid var(--border-color); display: none; margin-top: 6px;"></div>
+        </div>
+
+        <div class="prop-title" style="margin-top: 6px;">初期テキストラベル</div>
+        <div class="prop-row">
+          <label>テキスト:</label>
+          <input type="text" id="obj-create-text" class="prop-input" placeholder="例: 机, 会議室A (空欄可)">
+        </div>
+        <div class="prop-row" style="margin-bottom: 2px;">
+          <label>文字色:</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="obj-create-textcolor" class="prop-input" value="#ffffff">
+            <button type="button" class="eyedropper-btn" id="btn-eyedropper-obj-create-textcolor" title="文字色をスポイト取得">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 11l-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l5 5a2.12 2.12 0 0 0 3 0L19 11z"/>
+                <path d="M5 21h14"/>
+              </svg>
+            </button>
+          </div>
+          <label style="margin-left: 8px;">サイズ:</label>
+          <input type="number" id="obj-create-fontsize" class="prop-input" value="13" min="8" max="48" style="width: 55px;">
+        </div>
+        <div id="obj-create-textcolor-presets" class="color-presets-row" style="padding-left: 60px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="modal-new-object">キャンセル</button>
+        <button class="btn-primary" id="btn-save-new-object">パレットに追加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Grid Settings -->
+  <div class="modal-overlay" id="modal-grid-settings">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>グリッド設定</span>
+        <button class="modal-close" data-close="modal-grid-settings">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="prop-row">
+          <label>見た目マス (px):</label>
+          <input type="number" id="grid-visual-size" class="prop-input" value="40" min="10" max="200" step="5">
+        </div>
+        <div class="prop-row">
+          <label>配置グリッド分割数:</label>
+          <select id="grid-subdivisions" class="prop-input">
+            <option value="1">1分割 (見た目と等倍 1:1)</option>
+            <option value="2" selected>2分割 (標準 1:2)</option>
+            <option value="3">3分割 (1:3)</option>
+            <option value="4">4分割 (細密 1:4)</option>
+          </select>
+        </div>
+        <div class="prop-row" style="margin-bottom: 2px;">
+          <label>見た目グリッド線:</label>
+          <input type="color" id="grid-visual-color" class="prop-input" value="#334155">
+        </div>
+        <div id="grid-visual-presets" class="color-presets-row" style="padding-left: 100px; margin-bottom: 6px;"></div>
+
+        <div class="prop-row" style="margin-bottom: 2px;">
+          <label>配置スナップ線:</label>
+          <input type="color" id="grid-snap-color" class="prop-input" value="#1e293b">
+        </div>
+        <div id="grid-snap-presets" class="color-presets-row" style="padding-left: 100px; margin-bottom: 6px;"></div>
+        <div class="prop-row">
+          <label style="width: auto;">
+            <input type="checkbox" id="grid-show-snap" checked> 配置スナップ補助線を表示する
+          </label>
+        </div>
+        <div class="prop-row">
+          <label style="width: auto;">
+            <input type="checkbox" id="grid-show-on-floor" checked> 床の上にもグリッド線を表示する
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" data-close="modal-grid-settings">完了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Shortcuts Customization -->
+  <div class="modal-overlay" id="modal-shortcuts">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>ショートカットキーのカスタマイズ</span>
+        <button class="modal-close" data-close="modal-shortcuts">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+          キーをクリックして変更したいキーを入力してください:
+        </div>
+        <div id="shortcuts-list" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-reset-shortcuts">初期値に戻す</button>
+        <button class="btn-primary" data-close="modal-shortcuts">保存して閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Export Image Settings -->
+  <div class="modal-overlay" id="modal-export-image">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>画像エクスポート</span>
+        <button class="modal-close" data-close="modal-export-image">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="prop-row">
+          <label>形式:</label>
+          <select id="export-format" class="prop-input">
+            <option value="png">PNG (ラスタ画像)</option>
+            <option value="svg">SVG (ベクタ画像)</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <label>余白 (マス):</label>
+          <input type="number" id="export-padding" class="prop-input" value="2" min="0" max="10">
+        </div>
+        <div class="prop-row">
+          <label style="width: auto;">
+            <input type="checkbox" id="export-include-grid" checked> 方眼紙のグリッド線を含める
+          </label>
+        </div>
+        <div class="prop-row">
+          <label style="width: auto;">
+            <input type="checkbox" id="export-transparent-bg"> 背景を透過にする
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="modal-export-image">キャンセル</button>
+        <button class="btn-primary" id="btn-do-export">エクスポート実行</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Scripts (Ordered dependency) -->
+  <script src="js/state.js"></script>
+  <script src="js/grid.js"></script>
+  <script src="js/walls.js"></script>
+  <script src="js/objects.js"></script>
+  <script src="js/color.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/palette.js"></script>
+  <script src="js/hotbar.js"></script>
+  <script src="js/shortcuts.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
