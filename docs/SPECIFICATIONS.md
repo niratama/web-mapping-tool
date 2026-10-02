@@ -615,7 +615,7 @@ Canvas 2D の描画は以下の厳格なレイヤー順序でパイプライン�
 ## 7. テスト仕様 & 品質保証
 
 ### 7.1 コアロジック単体テスト (`test/logic_test.js`)
-外部テストフレームワークを必要とせず、Node.js 標準機能だけで高速実行されます。全23項目の検証内容は以下の通りです:
+外部テストフレームワークを必要とせず、Node.js 標準機能だけで高速実行されます。全31項目の検証内容は以下の通りです:
 
 | テスト番号 | テスト項目 | 検証内容 |
 | :---: | :--- | :--- |
@@ -642,9 +642,17 @@ Canvas 2D の描画は以下の厳格なレイヤー順序でパイプライン�
 | **Test 21** | Legacy Placed Object Property Panel | `paletteItemId` を持たない過去の古いオブジェクト選択時の安全な描画 |
 | **Test 22** | Stroke & Text Color Presets | 枠線色・文字色のカラーピッカーへの厳選プリセット適用 |
 | **Test 23** | Grid Show On Floor Settings | 床上グリッド線トグル設定、描画パイプライン順序、PNG/SVGエクスポート反映 |
+| **Test 24** | Google Drive Integration & State Persistence | OAuth Client ID 管理、Drive 状態保持、認証解除の整合性 |
+| **Test 25** | Settings Manager Backup & Restore | 設定エクスポート、インポート、選択的適用、工場出荷リセットの検証 |
+| **Test 26** | Realistic Texture Assets & UV Renderer | 高品質テクスチャアセットの存在性、ワールド座標UVタイリング描画ロジック |
+| **Test 27** | Textured Sample Objects & Palette | デフォルトテクスチャオブジェクト群のパレット登録とプロパティ整合性 |
+| **Test 28** | Autosave Palette Migration | 古いセーブデータ復元時の新テクスチャアイテム自動マージ |
+| **Test 29** | Stroke Width & Hotbar Texture Slots | 枠線幅0（フチなし透過描画）およびホットバー7〜9スロット初期割り当て |
+| **Test 30** | Object Z-Index 4-Way Ordering | 最前面・前面・背面・最背面移動および正規化処理の整合性 |
+| **Test 31** | PWA Manifest & Service Worker | Web App Manifest、アイコン画像群、Service Worker キャッシュ整合性 |
 
 ### 7.2 DOM 整合性テスト (`test/dom_integrity_test.js`)
-[index.html](file:///home/developer/projects/web-mapping-tool/index.html) 内に定義されている 107 個以上の要素 ID と、各 JS ファイル（`app.js`, `palette.js`, `color.js` 等）内で `getElementById` されている ID を静的解析し、タイポや未定義参照が存在しないことを自動検証します。
+[index.html](file:///home/developer/projects/web-mapping-tool/index.html) 内に定義されている 157 個の要素 ID と、各 JS ファイル（`app.js`, `palette.js`, `color.js`, `shortcuts.js` 等）内で `getElementById` されている ID を静的解析し、タイポや未定義参照が存在しないことを自動検証します。
 
 ### 7.3 テスト実行コマンド
 ```bash
@@ -704,8 +712,8 @@ google-chrome index.html
    # 3. CHANGELOG.md に変更内容を追記
    # 4. コミット & Git タグの作成
    git add -A
-   git commit -m "chore: release v1.1.0"
-   git tag -a v1.1.0 -m "Release v1.1.0"
+   git commit -m "chore: release v1.2.0"
+   git tag -a v1.2.0 -m "Release v1.2.0"
    # 5. リモートへプッシュ (タグ含む)
    git push origin main --tags
    ```
@@ -719,3 +727,4 @@ google-chrome index.html
 | 2026-09-29 | 0.1 | 方眼紙ベースWebマッピングツールの要求事項定義・基本設計計画書作成 | 開発チーム |
 | 2026-09-30 | 1.0 | コアエンジン、UI分離、開口部スナップ、カラーマネジメント、8x8マトリクス、床上グリッド等の実装完了。全23テスト通過。GitHub Pages 公開対応 | 開発チーム |
 | 2026-10-02 | 1.1 | 開発チャット履歴・セッションDBを精査し、内部アーキテクチャ、バグ修正経緯、未完了タスク・ロードマップを統合した詳細仕様書 (`SPECIFICATIONS.md`) を新規策定 | 開発チーム |
+| 2026-10-03 | 1.2 | Google Drive連携、設定バックアップ/復元、シームレステクスチャ・透過PNG、フチなし描画、Z-Index操作、ヘルプモーダル、PWA対応を完了し正式リリース。全31テスト通過 | 開発チーム |
