@@ -143,7 +143,13 @@ Webブラウザ上で軽快に動作する、方眼紙ベースのマップ作�
    `index.html` をお好みのブラウザ（Google Chrome, Edge, Firefox, Safari等）にドラッグ＆ドロップして開くだけで、オフラインでも全機能が動作します。
 
 2. **ローカルサーバーで開く場合**:
+   Python でも Node.js でも、外部パッケージのインストール不要で手軽に起動できます。
+
    ```bash
+   # Node.js を使用する場合 (おすすめ)
+   npm run serve
+   # または npm start (http://localhost:8000 で起動)
+
    # Python を使用する場合
    python3 -m http.server 8000
    # ブラウザで http://localhost:8000 を開く
@@ -157,8 +163,10 @@ Webブラウザ上で軽快に動作する、方眼紙ベースのマップ作�
 web-mapping-tool/
 ├── index.html           # メインHTML（UIレイアウト、モーダル、ホットバー）
 ├── LICENSE              # MIT ライセンスファイル
-├── package.json         # プロジェクトメタデータ・テストスクリプト定義
+├── package.json         # プロジェクトメタデータ・テスト & サーバー起動スクリプト定義
 ├── CHANGELOG.md         # バージョン変更履歴
+├── scripts/
+│   └── serve.js         # Node.js 標準モジュールによる軽量ローカルHTTPサーバー
 ├── docs/
 │   ├── SPECIFICATIONS.md # 開発者向け詳細仕様書・内部アーキテクチャ・ロードマップ
 │   └── DEV_CONVERSATION_HISTORY.md # 開発チャット履歴アーカイブ

@@ -597,16 +597,20 @@ node test/logic_test.js && node test/dom_integrity_test.js
 ## 8. 開発環境のセットアップ & デプロイ
 
 ### 8.1 ローカル開発環境の起動
-特別なビルドコマンドや npm install は一切不要です。
+特別なビルドコマンドや npm install は一切不要です。外部依存ゼロ（Zero Dependency）で動作します。
 
 ```bash
-# 方法 1: index.html を直接ブラウザで開く (オフライン動作可能)
-google-chrome index.html
-# または open index.html (macOS) / start index.html (Windows)
+# 方法 1: Node.js による標準ローカルサーバー (おすすめ)
+npm run serve
+# または npm start (http://localhost:8000 で起動)
 
-# 方法 2: Python による軽量ローカルサーバー (推奨)
+# 方法 2: Python による軽量ローカルサーバー
 python3 -m http.server 8000
 # ブラウザで http://localhost:8000 を開く
+
+# 方法 3: index.html を直接ブラウザで開く (オフライン動作可能)
+google-chrome index.html
+# または open index.html (macOS) / start index.html (Windows)
 ```
 
 ### 8.2 GitHub Pages & 本番運用情報

@@ -4,6 +4,8 @@
   "description": "Web-based grid mapping and floor plan creation tool built with pure HTML5, CSS3, and Vanilla JavaScript.",
   "main": "index.html",
   "scripts": {
+    "start": "node scripts/serve.js",
+    "serve": "node scripts/serve.js",
     "test": "node test/logic_test.js && node test/dom_integrity_test.js"
   },
   "keywords": [
