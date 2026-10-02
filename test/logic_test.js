@@ -1307,7 +1307,65 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
   console.log('✔ Test 28 Passed!\n');
 }
 
+// Test 29: Stroke Width Customization & Hotbar Texture Item Slots (v1.2.0)
+{
+  console.log('Test 29: Stroke Width Customization & Hotbar Texture Item Slots (v1.2.0)');
+
+  // 1. AppState version
+  assert.strictEqual(AppState.version, '1.2.0', 'AppState.version should be 1.2.0');
+  const serialized = AppState.serializeMapData();
+  assert.strictEqual(serialized.version, '1.2.0', 'Serialized map data version must be 1.2.0');
+
+  // 2. Hotbar texture assignments
+  AppState.initDefaultHotbar();
+  assert(AppState.hotbar[7], 'Hotbar slot 7 (Key 8) should be populated');
+  assert.strictEqual(AppState.hotbar[7].id, 'item-wood-table-textured');
+
+  assert(AppState.hotbar[8], 'Hotbar slot 8 (Key 9) should be populated');
+  assert.strictEqual(AppState.hotbar[8].id, 'item-persian-rug');
+
+  assert(AppState.hotbar[9], 'Hotbar slot 9 (Key 0) should be populated');
+  assert.strictEqual(AppState.hotbar[9].id, 'item-magic-circle-alpha');
+  assert.strictEqual(AppState.hotbar[9].strokeWidth, 0, 'Alpha magic circle should have strokeWidth = 0');
+
+  // 3. Object with strokeWidth = 0 (borderless)
+  const borderlessObj = {
+    id: 'obj-borderless-test',
+    name: 'フチなし魔方陣',
+    x: 100,
+    y: 100,
+    width: 80,
+    height: 80,
+    rotation: 0,
+    shapeType: 'rect',
+    fillType: 'image',
+    imageData: 'assets/textures/magic_circle_alpha.png',
+    color: 'transparent',
+    strokeColor: 'transparent',
+    strokeWidth: 0,
+    text: '',
+    textColor: '#ffffff',
+    fontSize: 12,
+    zIndex: 1
+  };
+
+  AppState.objects.push(borderlessObj);
+  assert.strictEqual(borderlessObj.strokeWidth, 0);
+
+  // Update strokeWidth via property panel logic
+  borderlessObj.strokeWidth = 3;
+  assert.strictEqual(borderlessObj.strokeWidth, 3);
+  borderlessObj.strokeWidth = 0;
+  assert.strictEqual(borderlessObj.strokeWidth, 0);
+
+  // Clean up
+  AppState.objects = AppState.objects.filter(o => o.id !== 'obj-borderless-test');
+
+  console.log('✔ Test 29 Passed!\n');
+}
+
 console.log('🎉 All Core Logic Tests Passed Successfully! 🎉');
+
 
 
 

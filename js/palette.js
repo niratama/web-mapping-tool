@@ -389,6 +389,8 @@ const PaletteManager = {
     document.getElementById('fill-image-controls').style.display = 'none';
     document.getElementById('obj-create-color').value = '#3b82f6';
     document.getElementById('obj-create-stroke').value = '#1d4ed8';
+    const strokeWCreate = document.getElementById('obj-create-strokewidth');
+    if (strokeWCreate) strokeWCreate.value = '1';
     document.getElementById('obj-create-text').value = '';
     document.getElementById('obj-create-textcolor').value = '#ffffff';
     document.getElementById('obj-create-fontsize').value = '13';
@@ -491,6 +493,11 @@ const PaletteManager = {
       document.getElementById('fill-image-controls').style.display = 'none';
       document.getElementById('obj-create-color').value = item.color || '#3b82f6';
       document.getElementById('obj-create-stroke').value = item.strokeColor || '#1d4ed8';
+    }
+
+    const strokeWEdit = document.getElementById('obj-create-strokewidth');
+    if (strokeWEdit) {
+      strokeWEdit.value = (typeof item.strokeWidth === 'number') ? String(item.strokeWidth) : '1';
     }
 
     document.getElementById('obj-create-text').value = item.text || '';
@@ -779,11 +786,14 @@ const PaletteManager = {
       height = rows * snapUnit;
     }
 
+    const strokeWidthInput = document.getElementById('obj-create-strokewidth');
+    const strokeWidth = strokeWidthInput !== null ? parseInt(strokeWidthInput.value, 10) : 1;
+
     if (this.editingItemId) {
       const item = AppState.paletteItems.find(i => i.id === this.editingItemId);
       if (item) {
         Object.assign(item, {
-          name, group, width, height, shapeType, cells, fillType, color, strokeColor,
+          name, group, width, height, shapeType, cells, fillType, color, strokeColor, strokeWidth,
           imageData: fillType === 'image' ? this.tempImageData : null,
           text, textColor, fontSize
         });
@@ -805,6 +815,7 @@ const PaletteManager = {
         fillType,
         color,
         strokeColor,
+        strokeWidth,
         imageData: fillType === 'image' ? this.tempImageData : null,
         text,
         textColor,
@@ -827,7 +838,7 @@ const PaletteManager = {
     const items = AppState.paletteItems.filter(i => i.group === this.activeGroupId);
 
     const libData = {
-      version: (typeof AppState !== 'undefined' && AppState.version) ? AppState.version : '1.1.0',
+      version: (typeof AppState !== 'undefined' && AppState.version) ? AppState.version : '1.2.0',
       type: 'gridmap-library',
       group: currentGroup,
       items
@@ -1192,6 +1203,17 @@ const PaletteManager = {
           </div>
           <div id="prop-obj-stroke-presets" class="color-presets-row" style="padding-left: 60px;"></div>
 
+          <div class="prop-row" style="margin-top: 4px;">
+            <label>枠線幅:</label>
+            <select id="prop-obj-strokewidth" class="prop-input">
+              <option value="0" ${obj.strokeWidth === 0 ? 'selected' : ''}>なし (0px)</option>
+              <option value="1" ${(obj.strokeWidth === 1 || obj.strokeWidth === undefined) ? 'selected' : ''}>細め (1px)</option>
+              <option value="2" ${obj.strokeWidth === 2 ? 'selected' : ''}>標準 (2px)</option>
+              <option value="3" ${obj.strokeWidth === 3 ? 'selected' : ''}>太め (3px)</option>
+              <option value="4" ${obj.strokeWidth === 4 ? 'selected' : ''}>極太 (4px)</option>
+            </select>
+          </div>
+
           <div class="prop-row">
             <label>画像変更:</label>
             <input type="file" id="prop-obj-image" accept="image/*" class="prop-input">
@@ -1309,6 +1331,14 @@ const PaletteManager = {
         if (window.CanvasManager) CanvasManager.requestRender();
         AppState.pushHistory('枠線色変更');
       };
+      const strokeWEl = document.getElementById('prop-obj-strokewidth');
+      if (strokeWEl) {
+        strokeWEl.onchange = (e) => {
+          obj.strokeWidth = parseInt(e.target.value, 10);
+          if (window.CanvasManager) CanvasManager.requestRender();
+          AppState.pushHistory('枠線幅変更');
+        };
+      }
       document.getElementById('prop-obj-text').oninput = (e) => {
         obj.text = e.target.value;
         if (window.CanvasManager) CanvasManager.requestRender();

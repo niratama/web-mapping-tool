@@ -4,7 +4,7 @@
 
 const AppState = {
   // Application Version
-  version: '1.1.0',
+  version: '1.2.0',
 
   // Grid Configuration
   grid: {
@@ -491,12 +491,15 @@ const AppState = {
     this.hotbar[4] = this.paletteItems.find(i => i.id === 'item-door-single');
     this.hotbar[5] = this.paletteItems.find(i => i.id === 'item-window');
     this.hotbar[6] = this.paletteItems.find(i => i.id === 'item-chest');
+    this.hotbar[7] = this.paletteItems.find(i => i.id === 'item-wood-table-textured');
+    this.hotbar[8] = this.paletteItems.find(i => i.id === 'item-persian-rug');
+    this.hotbar[9] = this.paletteItems.find(i => i.id === 'item-magic-circle-alpha');
   },
 
   // Serialization for Snapshot & Saving
   serializeMapData() {
     return {
-      version: this.version || '1.1.0',
+      version: this.version || '1.2.0',
       timestamp: Date.now(),
       grid: { ...this.grid },
       floors: Array.from(this.floors.entries()),
