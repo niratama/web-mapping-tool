@@ -109,6 +109,13 @@ Webブラウザ上で軽快に動作する、方眼紙ベースのマップ作�
 - **JSON保存 & 読込**: マップの全データを完全保存・復元（画像もBase64で内包するため1ファイルで共有可能）。
 - **オートセーブ（自動一時保存）**: 編集ごとにブラウザの `LocalStorage` にバックアップされ、誤ってリロードしても直前の作業状態を復元。
 
+### 13. Google Drive クラウド連携
+- **完全クライアントサイド（サーバーレス）**: バックエンドサーバーを介さず、ブラウザから Google Drive API を直接呼び出して安全に連携。
+- **専用フォルダ自動管理**: Google Drive 直下に `GridMapStudio/` および `Textures/` フォルダを自動作成し、マップファイルやテクスチャ画像を整理。
+- **クラウド保存・読込・削除**: ワンクリックで新規保存、既存ファイルへの上書き保存、クラウドからの読込、不要ファイルの削除が可能。
+- **テクスチャ画像の同期**: Google Drive 上の画像（PNG/JPG/SVG/WebP）を読み込んで床や壁のテクスチャに直接適用可能。
+- **ハイブリッド Client ID**: 公開サイトでは公式 Client ID が自動適用され、ローカル環境でも独自 Client ID をモーダルから簡単に設定可能（詳細は [GOOGLE_DRIVE_SETUP.md](docs/GOOGLE_DRIVE_SETUP.md) 参照）。
+
 ---
 
 ## ⌨️ デフォルト ショートカットキー一覧
@@ -169,6 +176,7 @@ web-mapping-tool/
 │   └── serve.js         # Node.js 標準モジュールによる軽量ローカルHTTPサーバー
 ├── docs/
 │   ├── SPECIFICATIONS.md # 開発者向け詳細仕様書・内部アーキテクチャ・ロードマップ
+│   ├── GOOGLE_DRIVE_SETUP.md # Google Drive OAuth 2.0 クライアント ID 取得手順書
 │   └── DEV_CONVERSATION_HISTORY.md # 開発チャット履歴アーカイブ
 ├── css/
 │   └── style.css        # モダンで洗練されたUIスタイルシート
@@ -183,9 +191,10 @@ web-mapping-tool/
 │   ├── palette.js       # パレットUI、アイテム編集/複製/削除、ライブラリ管理、プロパティパネル
 │   ├── hotbar.js        # 数字キー1〜0のクイックスロット管理
 │   ├── shortcuts.js     # キーバインド監視、カスタマイズ設定
-│   └── export.js        # PNG/SVGエクスポート（床上グリッド対応）、JSON保存/読込
+│   ├── export.js        # PNG/SVGエクスポート（床上グリッド対応）、JSON保存/読込
+│   └── gdrive.js        # Google Drive 連携（OAuth 2.0認証、マップ・テクスチャ同期）
 └── test/
-    ├── logic_test.js    # コアロジック単体テスト（Test 1〜23）
+    ├── logic_test.js    # コアロジック単体テスト（Test 1〜24）
     └── dom_integrity_test.js # DOM整合性テスト
 ```
 

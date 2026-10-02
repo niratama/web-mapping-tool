@@ -29,6 +29,9 @@ const AppState = {
     zoom: 1.0
   },
 
+  // Cloud Storage State (Google Drive)
+  currentDriveFile: null, // { fileId, name, modifiedTime }
+
   // Tools & Selection State
   currentTool: 'select', // 'select' | 'floor' | 'wall' | 'eraser' | 'hand'
   selectedObjectIds: new Set(),
@@ -497,6 +500,7 @@ const AppState = {
     this.selectedWallKeys.clear();
     this.selectedFloorKeys.clear();
     this.selectedOpeningIds.clear();
+    this.currentDriveFile = null;
     this.pushHistory('クリア');
     if (window.CanvasManager) CanvasManager.requestRender();
   }

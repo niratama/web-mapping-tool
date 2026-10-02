@@ -48,6 +48,7 @@ require('../js/walls.js');
 require('../js/objects.js');
 require('../js/color.js');
 require('../js/export.js');
+require('../js/gdrive.js');
 require('../js/palette.js');
 require('../js/shortcuts.js');
 require('../js/canvas.js');
@@ -945,6 +946,60 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
   document.getElementById = origGetElementById;
 
   console.log('✔ Test 23 Passed!\n');
+}
+
+// Test 24: Google Drive Integration & State Persistence
+{
+  console.log('Test 24: Google Drive Integration & State Persistence');
+  assert(typeof GoogleDriveManager !== 'undefined', 'GoogleDriveManager should be defined');
+
+  // Initial State: no custom ID
+  localStorage.removeItem(GoogleDriveManager.STORAGE_KEY_CLIENT_ID);
+  assert.strictEqual(GoogleDriveManager.getClientId(), '', 'Client ID should be empty on localhost by default');
+  assert.strictEqual(GoogleDriveManager.isConfigured(), false, 'Should not be configured without client ID');
+  assert.strictEqual(GoogleDriveManager.isAuthenticated(), false, 'Should not be authenticated initially');
+
+  // Set Custom Client ID
+  const testClientId = '123456789-abcdefg.apps.googleusercontent.com';
+  GoogleDriveManager.setCustomClientId(testClientId);
+  assert.strictEqual(localStorage.getItem(GoogleDriveManager.STORAGE_KEY_CLIENT_ID), testClientId);
+  assert.strictEqual(GoogleDriveManager.getClientId(), testClientId);
+  assert.strictEqual(GoogleDriveManager.isConfigured(), true);
+
+  // AppState.currentDriveFile tracking
+  AppState.currentDriveFile = {
+    fileId: 'mock-file-123',
+    name: 'test_dungeon.json',
+    modifiedTime: '2026-10-03T00:00:00.000Z'
+  };
+  assert(AppState.currentDriveFile && AppState.currentDriveFile.fileId === 'mock-file-123');
+
+  // Sign out resets state
+  GoogleDriveManager.accessToken = 'mock_token';
+  GoogleDriveManager.tokenExpiresAt = Date.now() + 3600000;
+  GoogleDriveManager.currentUser = { name: 'Tester', email: 'test@example.com' };
+  GoogleDriveManager.appFolderId = 'folder_123';
+  GoogleDriveManager.texturesFolderId = 'textures_456';
+  assert.strictEqual(GoogleDriveManager.isAuthenticated(), true);
+
+  GoogleDriveManager.signOut();
+  assert.strictEqual(GoogleDriveManager.accessToken, null);
+  assert.strictEqual(GoogleDriveManager.tokenExpiresAt, 0);
+  assert.strictEqual(GoogleDriveManager.currentUser, null);
+  assert.strictEqual(GoogleDriveManager.appFolderId, null);
+  assert.strictEqual(GoogleDriveManager.texturesFolderId, null);
+  assert.strictEqual(GoogleDriveManager.isAuthenticated(), false);
+
+  // Reset Custom Client ID
+  GoogleDriveManager.setCustomClientId('');
+  assert.strictEqual(GoogleDriveManager.getClientId(), '');
+  assert.strictEqual(GoogleDriveManager.isConfigured(), false);
+
+  // Clear map resets currentDriveFile
+  AppState.clearLocalStorage();
+  assert.strictEqual(AppState.currentDriveFile, null, 'clearLocalStorage must reset currentDriveFile');
+
+  console.log('✔ Test 24 Passed!\n');
 }
 
 console.log('🎉 All Core Logic Tests Passed Successfully! 🎉');

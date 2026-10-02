@@ -167,6 +167,13 @@
       </button>
       <input type="file" id="file-input-map" accept=".json" style="display: none;">
 
+      <button class="tool-btn" id="btn-gdrive-manager" title="Google Drive クラウド連携 (保存・開く・テクスチャ)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        </svg>
+        <span>クラウド</span>
+      </button>
+
       <button class="tool-btn" id="btn-export-image" title="画像エクスポート (PNG / SVG)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -654,6 +661,130 @@
     </div>
   </div>
 
+  <!-- Modal 5: Google Drive Cloud Manager -->
+  <div class="modal-overlay" id="modal-gdrive-manager">
+    <div class="modal-card" style="width: 580px; max-width: 95vw;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+          <span>Google Drive クラウド連携</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="tool-btn" id="btn-open-gdrive-settings" title="Google Drive 接続設定" style="width: 28px; height: 28px; padding: 0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+          <button class="modal-close" data-close="modal-gdrive-manager">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 12px 16px;">
+        <!-- Auth Bar -->
+        <div id="gdrive-auth-bar" class="gdrive-auth-bar">
+          <div class="gdrive-user-info" id="gdrive-user-info">
+            <span class="status-indicator offline" id="gdrive-status-indicator"></span>
+            <span id="gdrive-user-name">未接続</span>
+          </div>
+          <div class="gdrive-auth-actions">
+            <button class="btn-primary" id="btn-gdrive-login" style="padding: 4px 12px; font-size: 0.8rem;">Google でログイン</button>
+            <button class="btn-secondary" id="btn-gdrive-logout" style="padding: 4px 10px; font-size: 0.8rem; display: none;">ログアウト</button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="palette-tabs" id="gdrive-modal-tabs" style="margin-top: 12px; border-bottom: 1px solid var(--border-color);">
+          <button class="tab-btn active" id="tab-btn-gdrive-maps" data-gtab="maps">🗺️ マップ一覧</button>
+          <button class="tab-btn" id="tab-btn-gdrive-save" data-gtab="save">💾 マップを保存</button>
+          <button class="tab-btn" id="tab-btn-gdrive-textures" data-gtab="textures">🎨 テクスチャ同期</button>
+        </div>
+
+        <!-- Tab 1: Map List -->
+        <div class="gdrive-tab-content active" id="gtab-content-maps">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 6px 0;">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">専用フォルダ (GridMapStudio/) 内のマップ:</span>
+            <button class="btn-secondary" id="btn-refresh-gdrive-maps" style="padding: 2px 8px; font-size: 0.75rem;">🔄 更新</button>
+          </div>
+          <div class="gdrive-file-list" id="gdrive-map-list">
+            <div class="gdrive-empty-msg">ログインすると、Google Drive 上の保存済みマップがここに表示されます。</div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Save Current Map -->
+        <div class="gdrive-tab-content" id="gtab-content-save" style="display: none;">
+          <div style="margin: 12px 0;">
+            <div id="gdrive-current-file-info" style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 10px; padding: 6px 10px; background: rgba(59, 130, 246, 0.1); border-radius: 4px; display: none;">
+              クラウド上の対象ファイル: <strong id="gdrive-current-file-label">無題</strong>
+            </div>
+            <div class="prop-row">
+              <label>ファイル名:</label>
+              <input type="text" id="input-gdrive-filename" class="prop-input" value="my_map" placeholder="マップ名を入力">
+              <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: 4px;">.json</span>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end;">
+              <button class="btn-secondary" id="btn-gdrive-save-overwrite" style="display: none;">上書き保存</button>
+              <button class="btn-primary" id="btn-gdrive-save-new">新規ファイルとして保存</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Textures List -->
+        <div class="gdrive-tab-content" id="gtab-content-textures" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 6px 0;">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">GridMapStudio/Textures/ 内の画像:</span>
+            <div style="display: flex; gap: 6px;">
+              <label class="btn-secondary" style="padding: 2px 8px; font-size: 0.75rem; cursor: pointer;">
+                ＋ 画像を追加
+                <input type="file" id="input-gdrive-upload-texture" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+              </label>
+              <button class="btn-secondary" id="btn-refresh-gdrive-textures" style="padding: 2px 8px; font-size: 0.75rem;">🔄 更新</button>
+            </div>
+          </div>
+          <div class="gdrive-texture-grid" id="gdrive-texture-list">
+            <div class="gdrive-empty-msg">Google Drive 上に保存したテクスチャ画像がここに一覧表示され、床や壁に適用できます。</div>
+          </div>
+        </div>
+
+        <!-- Status / Spinner Message -->
+        <div id="gdrive-status-box" style="display: none; padding: 8px 12px; margin-top: 10px; border-radius: 4px; font-size: 0.8rem;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="modal-gdrive-manager">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Google Drive Settings -->
+  <div class="modal-overlay" id="modal-gdrive-settings">
+    <div class="modal-card" style="width: 500px; max-width: 95vw;">
+      <div class="modal-header">
+        <span>Google Drive 接続設定</span>
+        <button class="modal-close" data-close="modal-gdrive-settings">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+          公開サイト (<code style="color: var(--accent-color);">http://nira.poi.jp</code>) では公式 Client ID が自動適用されます。<br>
+          ローカル環境 (<code>localhost:8000</code>) や個人環境で動かす場合は、各自で取得した OAuth Client ID を入力して保存してください。
+        </div>
+
+        <div class="prop-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+          <label style="font-weight: 600;">独自の OAuth Client ID (任意):</label>
+          <input type="text" id="input-gdrive-client-id" class="prop-input" style="width: 100%; font-family: monospace; font-size: 0.78rem;" placeholder="xxxxxxxxxxxx-xxxxxxxxxxxxxxxx.apps.googleusercontent.com">
+        </div>
+
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 8px;">
+          ※ Client ID の取得方法は <a href="docs/GOOGLE_DRIVE_SETUP.md" target="_blank" style="color: var(--accent-color); text-decoration: underline;">GOOGLE_DRIVE_SETUP.md</a> を参照してください。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-reset-gdrive-client-id">初期設定に戻す</button>
+        <button class="btn-primary" id="btn-save-gdrive-client-id">設定を保存</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Application Scripts (Ordered dependency) -->
   <script src="js/state.js"></script>
   <script src="js/grid.js"></script>
@@ -665,6 +796,7 @@
   <script src="js/hotbar.js"></script>
   <script src="js/shortcuts.js"></script>
   <script src="js/export.js"></script>
+  <script src="js/gdrive.js"></script>
   <script src="js/canvas.js"></script>
   <script src="js/app.js"></script>
 </body>
