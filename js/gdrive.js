@@ -9,9 +9,10 @@ const GoogleDriveManager = {
   TEXTURES_FOLDER_NAME: 'Textures',
   SCOPE: 'https://www.googleapis.com/auth/drive.file',
   STORAGE_KEY_CLIENT_ID: 'gridmap_custom_gdrive_client_id',
-  
+
   // Default Production Client ID (set your production ID here)
-  PRODUCTION_CLIENT_ID: 'YOUR_PRODUCTION_CLIENT_ID.apps.googleusercontent.com',
+  // PRODUCTION_CLIENT_ID: 'YOUR_PRODUCTION_CLIENT_ID.apps.googleusercontent.com',
+  PRODUCTION_CLIENT_ID: '909812781023-vfla8of8j89oj632imv756oppkucotmf.apps.googleusercontent.com',
 
   // Runtime State
   accessToken: null,
@@ -124,7 +125,7 @@ const GoogleDriveManager = {
             // Token is typically valid for 3600 seconds (1 hour); store expiration slightly early (55 min)
             const expiresIn = parseInt(response.expires_in, 10) || 3600;
             this.tokenExpiresAt = Date.now() + (expiresIn - 300) * 1000;
-            
+
             // Fetch basic profile info
             this.fetchUserProfile().catch(console.warn);
             resolve(this.accessToken);
@@ -148,7 +149,7 @@ const GoogleDriveManager = {
   signOut() {
     if (this.accessToken && window.google?.accounts?.oauth2?.revoke) {
       try {
-        window.google.accounts.oauth2.revoke(this.accessToken, () => {});
+        window.google.accounts.oauth2.revoke(this.accessToken, () => { });
       } catch (e) {
         console.warn('Revoke token error:', e);
       }
@@ -347,7 +348,7 @@ const GoogleDriveManager = {
   async loadMap(fileId) {
     const res = await this.apiRequest(`files/${fileId}?alt=media`);
     const json = await res.json();
-    
+
     // Also fetch metadata for file name
     const metaRes = await this.apiRequest(`files/${fileId}?fields=id,name,modifiedTime`);
     const metadata = await metaRes.json();
