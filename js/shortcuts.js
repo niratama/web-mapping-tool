@@ -71,7 +71,7 @@ const ShortcutManager = {
         }
 
         // 2. Close any open modal
-        document.querySelectorAll('.modal.active').forEach(m => {
+        document.querySelectorAll('.modal.active, .modal-overlay.active').forEach(m => {
           m.classList.remove('active');
           acted = true;
         });
@@ -172,6 +172,13 @@ const ShortcutManager = {
           this.executeAction(action);
           return;
         }
+      }
+
+      // Question mark (?) or Shift+/ to toggle Help Cheat Sheet Modal
+      if ((e.key === '?' || (e.key === '/' && e.shiftKey)) && !ctrlOrCmd && !e.altKey) {
+        e.preventDefault();
+        this.toggleHelpModal();
+        return;
       }
 
       // Standard Backspace/Delete fallback
@@ -287,6 +294,24 @@ const ShortcutManager = {
         this.resetDefaults();
         if (window.App) App.showToast('ショートカットを初期値に戻しました');
       };
+    }
+
+    const btnHelp = document.getElementById('btn-help-shortcuts');
+    if (btnHelp) {
+      btnHelp.onclick = () => {
+        this.toggleHelpModal();
+      };
+    }
+  },
+
+  // Toggle Help Cheat Sheet Modal
+  toggleHelpModal() {
+    const modal = document.getElementById('modal-help-shortcuts');
+    if (!modal) return;
+    if (modal.classList.contains('active')) {
+      modal.classList.remove('active');
+    } else {
+      modal.classList.add('active');
     }
   },
 

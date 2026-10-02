@@ -1244,10 +1244,12 @@ const PaletteManager = {
         </div>
 
         <div class="prop-group">
-          <div class="prop-title">レイヤー & 初期化</div>
-          <div class="prop-row" style="gap: 6px;">
-            <button class="btn-secondary" id="prop-z-up">最前面へ</button>
-            <button class="btn-secondary" id="prop-z-down">最背面へ</button>
+          <div class="prop-title">重なり順 (Z-Index) & 初期化</div>
+          <div class="prop-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+            <button class="btn-secondary" id="prop-z-front" title="一番手前に表示">⏫ 最前面へ</button>
+            <button class="btn-secondary" id="prop-z-forward" title="一つ手前に表示">🔼 前面へ</button>
+            <button class="btn-secondary" id="prop-z-backward" title="一つ奥に表示">🔽 背面へ</button>
+            <button class="btn-secondary" id="prop-z-back" title="一番奥に表示">⏬ 最背面へ</button>
           </div>
           <button class="btn-secondary" id="prop-reset-default-btn" style="margin-top: 8px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;" ${!defaultItem ? 'disabled title="対応するパレットのパーツが見つかりません"' : 'title="パレットに登録された初期設定（サイズ、色、枠線、文字等）に戻します"'}>
             <span>🔄</span><span>パレットの初期値に戻す</span>
@@ -1367,16 +1369,38 @@ const PaletteManager = {
           reader.readAsDataURL(file);
         }
       };
-      document.getElementById('prop-z-up').onclick = () => {
-        obj.zIndex = Math.max(...AppState.objects.map(o => o.zIndex || 0)) + 1;
-        if (window.CanvasManager) CanvasManager.requestRender();
-        AppState.pushHistory('最前面へ');
-      };
-      document.getElementById('prop-z-down').onclick = () => {
-        obj.zIndex = Math.min(...AppState.objects.map(o => o.zIndex || 0)) - 1;
-        if (window.CanvasManager) CanvasManager.requestRender();
-        AppState.pushHistory('最背面へ');
-      };
+      const btnZFront = document.getElementById('prop-z-front');
+      if (btnZFront) {
+        btnZFront.onclick = () => {
+          ObjectManager.bringToFront(obj);
+          if (window.CanvasManager) CanvasManager.requestRender();
+          AppState.pushHistory('オブジェクト最前面へ');
+        };
+      }
+      const btnZForward = document.getElementById('prop-z-forward');
+      if (btnZForward) {
+        btnZForward.onclick = () => {
+          ObjectManager.bringForward(obj);
+          if (window.CanvasManager) CanvasManager.requestRender();
+          AppState.pushHistory('オブジェクト前面へ');
+        };
+      }
+      const btnZBackward = document.getElementById('prop-z-backward');
+      if (btnZBackward) {
+        btnZBackward.onclick = () => {
+          ObjectManager.sendBackward(obj);
+          if (window.CanvasManager) CanvasManager.requestRender();
+          AppState.pushHistory('オブジェクト背面へ');
+        };
+      }
+      const btnZBack = document.getElementById('prop-z-back');
+      if (btnZBack) {
+        btnZBack.onclick = () => {
+          ObjectManager.sendToBack(obj);
+          if (window.CanvasManager) CanvasManager.requestRender();
+          AppState.pushHistory('オブジェクト最背面へ');
+        };
+      }
       const btnReset = document.getElementById('prop-reset-default-btn');
       if (btnReset && defaultItem) {
         btnReset.onclick = () => {

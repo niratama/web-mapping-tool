@@ -11,6 +11,8 @@
   <meta property="og:url" content="http://nira.poi.jp/web-mapping-tool/">
   <meta name="twitter:card" content="summary">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2.5'%3E%3Crect x='3' y='3' width='18' height='18' rx='3' fill='%230f172a'/%3E%3Cline x1='3' y1='9' x2='21' y2='9'/%3E%3Cline x1='3' y1='15' x2='21' y2='15'/%3E%3Cline x1='9' y1='3' x2='9' y2='21'/%3E%3Cline x1='15' y1='3' x2='15' y2='21'/%3E%3C/svg%3E">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
   <title>方眼紙マッピングツール (GridMap Studio)</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -189,6 +191,15 @@
           <polyline points="21 15 16 10 5 21"/>
         </svg>
         <span>画像出力</span>
+      </button>
+
+      <button class="tool-btn" id="btn-help-shortcuts" title="操作方法 & ショートカット一覧 (?)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span>ヘルプ</span>
       </button>
 
       <div class="separator"></div>
@@ -883,6 +894,78 @@
     </div>
   </div>
 
+  <!-- Modal 8: Help & Shortcuts Cheat Sheet -->
+  <div class="modal-overlay" id="modal-help-shortcuts">
+    <div class="modal-card" style="width: 580px; max-width: 95vw; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span>操作方法 & ショートカット一覧</span>
+        </div>
+        <button class="modal-close" data-close="modal-help-shortcuts">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px; overflow-y: auto; gap: 14px;">
+        <!-- Tools Section -->
+        <div>
+          <div style="font-weight: 600; font-size: 0.85rem; color: var(--accent-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>🛠️</span> ツール切り替え & マウス操作
+          </div>
+          <table class="help-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+            <tbody>
+              <tr><td style="padding: 4px 6px; width: 140px;"><kbd>V</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">選択・移動・変形ツール</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>F</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">床塗り・外周壁生成ツール（ブラシ/矩形ドラッグ/バケツ）</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>W</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">壁線ツール（グリッド交点をクリックで接続）</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>D</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">ドア・窓ツール（壁エッジにスナップ配置）</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>E</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">消しゴムツール（クリックまたはドラッグで消去）</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>H</kbd> / <kbd>Space</kbd>+ドラッグ</td><td style="padding: 4px 6px; color: var(--text-muted);">画面の移動 / パン (マウス中ボタンでも可能)</td></tr>
+              <tr><td style="padding: 4px 6px;">ホイール回転</td><td style="padding: 4px 6px; color: var(--text-muted);">拡大 / 縮小 (ズーム)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Hotbar & Placement -->
+        <div>
+          <div style="font-weight: 600; font-size: 0.85rem; color: var(--accent-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>⚡</span> ホットバー & 配置・編集
+          </div>
+          <table class="help-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+            <tbody>
+              <tr><td style="padding: 4px 6px; width: 140px;"><kbd>1</kbd> 〜 <kbd>9</kbd>, <kbd>0</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">ホットバースロット 1〜10 のパーツをクイック選択</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>R</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">配置前プレビュー/選択オブジェクトの回転（90°）、ドアの開き向き・吊元反転</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>Delete</kbd> / <kbd>BS</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">選択中のオブジェクト・壁・床・開口部を削除</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>Esc</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">選択解除 / 配置待機の解除（選択ツールへ復帰）</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- History & System -->
+        <div>
+          <div style="font-weight: 600; font-size: 0.85rem; color: var(--accent-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>⌨️</span> 編集ショートカット & ファイル操作
+          </div>
+          <table class="help-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+            <tbody>
+              <tr><td style="padding: 4px 6px; width: 140px;"><kbd>Ctrl</kbd> + <kbd>Z</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">元に戻す (Undo)</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>Ctrl</kbd> + <kbd>Y</kbd> / <kbd>Shift</kbd>+<kbd>Z</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">やり直す (Redo)</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>Ctrl</kbd> + <kbd>C</kbd> / <kbd>V</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">選択オブジェクトのコピー & ペースト</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>Ctrl</kbd> + <kbd>D</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">選択オブジェクトの複製</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">マップの保存 (JSON)</td></tr>
+              <tr><td style="padding: 4px 6px;"><kbd>?</kbd></td><td style="padding: 4px 6px; color: var(--text-muted);">このヘルプを表示</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.75rem; color: var(--text-muted);">キーのカスタマイズはヘッダーの「キー設定」から行えます。</span>
+        <button class="btn-secondary" data-close="modal-help-shortcuts">閉じる</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Application Scripts (Ordered dependency) -->
   <script src="js/state.js"></script>
   <script src="js/grid.js"></script>
@@ -898,5 +981,16 @@
   <script src="js/gdrive.js"></script>
   <script src="js/canvas.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('ServiceWorker registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

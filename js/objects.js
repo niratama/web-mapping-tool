@@ -196,6 +196,59 @@ const ObjectManager = {
   deleteObject(objId) {
     AppState.objects = AppState.objects.filter(o => o.id !== objId);
     AppState.selectedObjectIds.delete(objId);
+  },
+
+  // Normalize zIndex values sequentially (1, 2, 3...)
+  normalizeZIndices() {
+    const sorted = [...AppState.objects].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+    sorted.forEach((obj, idx) => {
+      obj.zIndex = idx + 1;
+    });
+  },
+
+  // Bring object to front (highest zIndex)
+  bringToFront(obj) {
+    if (!obj || AppState.objects.length <= 1) return;
+    this.normalizeZIndices();
+    const maxZ = AppState.objects.reduce((max, o) => Math.max(max, o.zIndex || 0), 0);
+    obj.zIndex = maxZ + 1;
+    this.normalizeZIndices();
+  },
+
+  // Send object to back (lowest zIndex)
+  sendToBack(obj) {
+    if (!obj || AppState.objects.length <= 1) return;
+    this.normalizeZIndices();
+    obj.zIndex = 0;
+    this.normalizeZIndices();
+  },
+
+  // Bring object one step forward
+  bringForward(obj) {
+    if (!obj || AppState.objects.length <= 1) return;
+    this.normalizeZIndices();
+    const sorted = [...AppState.objects].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+    const idx = sorted.findIndex(o => o.id === obj.id);
+    if (idx !== -1 && idx < sorted.length - 1) {
+      const nextObj = sorted[idx + 1];
+      const temp = obj.zIndex;
+      obj.zIndex = nextObj.zIndex;
+      nextObj.zIndex = temp;
+    }
+  },
+
+  // Send object one step backward
+  sendBackward(obj) {
+    if (!obj || AppState.objects.length <= 1) return;
+    this.normalizeZIndices();
+    const sorted = [...AppState.objects].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+    const idx = sorted.findIndex(o => o.id === obj.id);
+    if (idx > 0) {
+      const prevObj = sorted[idx - 1];
+      const temp = obj.zIndex;
+      obj.zIndex = prevObj.zIndex;
+      prevObj.zIndex = temp;
+    }
   }
 };
 

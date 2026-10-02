@@ -1364,7 +1364,77 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
   console.log('✔ Test 29 Passed!\n');
 }
 
+// Test 30: Object Z-Index Ordering (Front, Forward, Backward, Back, Normalize)
+{
+  console.log('Test 30: Object Z-Index Ordering (Front, Forward, Backward, Back, Normalize)');
+
+  // Clear objects
+  AppState.objects = [];
+
+  const objA = { id: 'obj-a', name: 'A (底)', zIndex: 1, width: 40, height: 40, x: 0, y: 0 };
+  const objB = { id: 'obj-b', name: 'B (中)', zIndex: 2, width: 40, height: 40, x: 0, y: 0 };
+  const objC = { id: 'obj-c', name: 'C (頂)', zIndex: 3, width: 40, height: 40, x: 0, y: 0 };
+
+  AppState.objects.push(objA, objB, objC);
+
+  // 1. Bring bottom to front
+  ObjectManager.bringToFront(objA);
+  // Order should now be B (1), C (2), A (3)
+  assert.strictEqual(objB.zIndex, 1);
+  assert.strictEqual(objC.zIndex, 2);
+  assert.strictEqual(objA.zIndex, 3);
+
+  // 2. Send top to back
+  ObjectManager.sendToBack(objA);
+  // Order should now be A (1), B (2), C (3)
+  assert.strictEqual(objA.zIndex, 1);
+  assert.strictEqual(objB.zIndex, 2);
+  assert.strictEqual(objC.zIndex, 3);
+
+  // 3. Bring forward (A: 1 -> 2, B: 2 -> 1)
+  ObjectManager.bringForward(objA);
+  assert.strictEqual(objA.zIndex, 2);
+  assert.strictEqual(objB.zIndex, 1);
+
+  // 4. Send backward (A: 2 -> 1, B: 1 -> 2)
+  ObjectManager.sendBackward(objA);
+  assert.strictEqual(objA.zIndex, 1);
+  assert.strictEqual(objB.zIndex, 2);
+
+  // Clean up
+  AppState.objects = [];
+
+  console.log('✔ Test 30 Passed!\n');
+}
+
+// Test 31: PWA Manifest & Service Worker Integrity
+{
+  console.log('Test 31: PWA Manifest & Service Worker Integrity');
+  const fs = require('fs');
+
+  // Verify manifest.webmanifest exists and is valid JSON
+  assert(fs.existsSync('manifest.webmanifest'), 'manifest.webmanifest must exist');
+  const manifest = JSON.parse(fs.readFileSync('manifest.webmanifest', 'utf8'));
+  assert.strictEqual(manifest.name, 'GridMap Studio (方眼紙マッピングツール)');
+  assert.strictEqual(manifest.display, 'standalone');
+  assert(Array.isArray(manifest.icons) && manifest.icons.length >= 2);
+
+  // Verify icons exist
+  assert(fs.existsSync('assets/icon.svg'), 'assets/icon.svg must exist');
+  assert(fs.existsSync('assets/icon-192.png'), 'assets/icon-192.png must exist');
+  assert(fs.existsSync('assets/icon-512.png'), 'assets/icon-512.png must exist');
+
+  // Verify sw.js exists
+  assert(fs.existsSync('sw.js'), 'sw.js must exist');
+  const swContent = fs.readFileSync('sw.js', 'utf8');
+  assert(swContent.includes('CACHE_NAME'), 'sw.js must define CACHE_NAME');
+  assert(swContent.includes('gridmap-studio-v1.2.0'), 'sw.js must use v1.2.0 cache name');
+
+  console.log('✔ Test 31 Passed!\n');
+}
+
 console.log('🎉 All Core Logic Tests Passed Successfully! 🎉');
+
 
 
 
