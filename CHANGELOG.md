@@ -5,6 +5,21 @@
 
 ---
 
+## [Unreleased]
+
+### 計画中 / TODO (Planned)
+- **Google Drive クラウド連携 (v1.2.0)**:
+  - サーバーサイド不要の完全クライアントサイド認証（Google Identity Services: GIS）。
+  - 専用フォルダ UI 方式（Google Drive 直下に `GridMapStudio/` を作成し、自前モーダルでマップ保存・読込・削除）。
+  - ハイブリッド接続設定（本番公式 Client ID ＋ localhost/セルフホスト用カスタム ID 入力対応）。
+  - Google Drive からのテクスチャ画像（PNG/JPG等）読み込み・適用・マップ JSON 内包。
+  - OAuth Client ID 取得ガイドの策定済み（[`docs/GOOGLE_DRIVE_SETUP.md`](docs/GOOGLE_DRIVE_SETUP.md)）。
+- **高品質サンプルテクスチャアセットの拡充 (v1.2.0)**:
+  - AI生成による真上見下ろし（トップダウン）シームレステクスチャの配備（木目フローリング、石畳、大理石タイル、畳、レンガ壁等）。
+  - `assets/textures/` への配置と標準パレットプリセット化、Google Drive 初期サンプル提供。
+
+---
+
 ## [1.1.0] - 2026-10-02
 
 ### 追加 (Added)
