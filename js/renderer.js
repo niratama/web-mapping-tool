@@ -52,7 +52,7 @@ const CanvasRenderer = {
 
       // Render Procedural Floor Textures if specified
       if (floor.texture && floor.texture !== 'none') {
-        this.renderFloorTexture(ctx, screenPos.x, screenPos.y, screenSize, floor.texture);
+        this.renderFloorTexture(ctx, screenPos.x, screenPos.y, screenSize, floor.texture, floor.col, floor.row);
       }
 
       ctx.restore();
@@ -77,8 +77,8 @@ const CanvasRenderer = {
     return img;
   },
 
-  // Procedural & Image Floor Texture Renderer
-  renderFloorTexture(ctx, x, y, size, textureType) {
+  // Procedural & Image Floor Texture Renderer (Supports World-space Seamless UV Tiling)
+  renderFloorTexture(ctx, x, y, size, textureType, col = 0, row = 0) {
     if (!textureType || textureType === 'none') return;
 
     ctx.save();
@@ -90,7 +90,28 @@ const CanvasRenderer = {
     if (textureType.startsWith('data:image/') || textureType.startsWith('assets/') || textureType.startsWith('http')) {
       const img = this.loadTextureImage(textureType);
       if (img && img.complete && img.naturalWidth > 0) {
-        ctx.drawImage(img, x, y, size, size);
+        // Determine tiling span in grid cells based on texture type
+        let tileSpan = 4; // Default: 4x4 cells repeat
+        if (textureType.includes('marble_tile')) {
+          tileSpan = 8; // 8x8 tiles in texture -> 1 tile per grid cell!
+        } else if (textureType.includes('tatami')) {
+          tileSpan = 4; // 4x4 cells span -> approx 1x2 cells per tatami mat!
+        } else if (textureType.includes('wood_floor')) {
+          tileSpan = 4; // 4x4 cells span
+        } else if (textureType.includes('stone_pavement') || textureType.includes('dungeon')) {
+          tileSpan = 4; // 4x4 cells span
+        }
+
+        // Calculate cell offset within the repeating tile block (handles negative coordinates gracefully)
+        const normCol = ((col % tileSpan) + tileSpan) % tileSpan;
+        const normRow = ((row % tileSpan) + tileSpan) % tileSpan;
+
+        const cellW = img.naturalWidth / tileSpan;
+        const cellH = img.naturalHeight / tileSpan;
+        const srcX = normCol * cellW;
+        const srcY = normRow * cellH;
+
+        ctx.drawImage(img, srcX, srcY, cellW, cellH, x, y, size, size);
       }
       ctx.restore();
       return;

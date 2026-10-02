@@ -137,7 +137,7 @@ const ExportManager = {
       ctx.fillStyle = floor.color || '#e2e8f0';
       ctx.fillRect(x, y, visualSize, visualSize);
       if (floor.texture && floor.texture !== 'none') {
-        CanvasRenderer.renderFloorTexture(ctx, x, y, visualSize, floor.texture);
+        CanvasRenderer.renderFloorTexture(ctx, x, y, visualSize, floor.texture, floor.col, floor.row);
       }
     }
 
