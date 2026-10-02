@@ -156,6 +156,12 @@ Webブラウザ上で軽快に動作する、方眼紙ベースのマップ作�
 ```
 web-mapping-tool/
 ├── index.html           # メインHTML（UIレイアウト、モーダル、ホットバー）
+├── LICENSE              # MIT ライセンスファイル
+├── package.json         # プロジェクトメタデータ・テストスクリプト定義
+├── CHANGELOG.md         # バージョン変更履歴
+├── docs/
+│   ├── SPECIFICATIONS.md # 開発者向け詳細仕様書・内部アーキテクチャ・ロードマップ
+│   └── DEV_CONVERSATION_HISTORY.md # 開発チャット履歴アーカイブ
 ├── css/
 │   └── style.css        # モダンで洗練されたUIスタイルシート
 ├── js/
@@ -174,3 +180,10 @@ web-mapping-tool/
     ├── logic_test.js    # コアロジック単体テスト（Test 1〜23）
     └── dom_integrity_test.js # DOM整合性テスト
 ```
+
+---
+
+## 📄 ライセンス
+
+本プロジェクトは **[MIT License](LICENSE)** のもとで公開されています。商用・非商用問わず自由にご利用・改変いただけます。
+
