@@ -23,6 +23,9 @@ const PaletteManager = {
     this.renderItems();
     this.initModalEvents();
     this.initPropertyEvents();
+    if (typeof ObjectManager !== 'undefined' && ObjectManager.preloadPaletteImages) {
+      ObjectManager.preloadPaletteImages();
+    }
   },
 
   // Render Category Tabs

@@ -694,7 +694,11 @@ const App = {
           { name: 'stone_pavement.jpg', path: 'assets/textures/stone_pavement.jpg' },
           { name: 'marble_tile.jpg', path: 'assets/textures/marble_tile.jpg' },
           { name: 'dungeon_flagstone.jpg', path: 'assets/textures/dungeon_flagstone.jpg' },
-          { name: 'tatami_mat.jpg', path: 'assets/textures/tatami_mat.jpg' }
+          { name: 'tatami_mat.jpg', path: 'assets/textures/tatami_mat.jpg' },
+          { name: 'persian_rug.jpg', path: 'assets/textures/persian_rug.jpg' },
+          { name: 'magic_circle.jpg', path: 'assets/textures/magic_circle.jpg' },
+          { name: 'ornate_chest.jpg', path: 'assets/textures/ornate_chest.jpg' },
+          { name: 'stone_altar.jpg', path: 'assets/textures/stone_altar.jpg' }
         ];
 
         btnUploadSamples.disabled = true;

@@ -731,8 +731,25 @@ const CanvasRenderer = {
 
         // Draw shape body
         if (item.shapeType === 'rect') {
-          if (item.fillType === 'image' && item.imageElement && item.imageElement.complete) {
-            ctx.drawImage(item.imageElement, -halfW, -halfH, screenW, screenH);
+          if (item.fillType === 'image' && item.imageData) {
+            if (!item.imageElement && typeof Image !== 'undefined') {
+              const img = new Image();
+              img.src = item.imageData;
+              img.onload = () => {
+                item.imageElement = img;
+                if (window.CanvasManager) CanvasManager.requestRender();
+              };
+              if (img.complete) {
+                item.imageElement = img;
+              }
+              item.imageElement = img;
+            }
+            if (item.imageElement && item.imageElement.complete) {
+              ctx.drawImage(item.imageElement, -halfW, -halfH, screenW, screenH);
+            } else {
+              ctx.fillStyle = item.color || '#3b82f6';
+              ctx.fillRect(-halfW, -halfH, screenW, screenH);
+            }
           } else {
             ctx.fillStyle = item.color || '#3b82f6';
             ctx.fillRect(-halfW, -halfH, screenW, screenH);

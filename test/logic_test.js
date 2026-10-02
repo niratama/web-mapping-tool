@@ -1151,6 +1151,97 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
   console.log('✔ Test 26 Passed!\n');
 }
 
+// Test 27: Textured Sample Objects & Palette Integration
+{
+  console.log('Test 27: Textured Sample Objects & Palette Integration');
+  const fs = require('fs');
+  const path = require('path');
+
+  // 1. Verify that new texture asset files exist on disk
+  const sampleTextureFiles = [
+    'persian_rug.jpg',
+    'magic_circle.jpg',
+    'ornate_chest.jpg',
+    'stone_altar.jpg'
+  ];
+
+  sampleTextureFiles.forEach(file => {
+    const fullPath = path.join(__dirname, '../assets/textures', file);
+    assert(fs.existsSync(fullPath), `Texture asset ${file} must exist in assets/textures/`);
+    const stat = fs.statSync(fullPath);
+    assert(stat.size > 10000, `Texture file ${file} should have valid image content size`);
+  });
+
+  // 2. Initialize default palette and verify textured items
+  AppState.initDefaultPalette();
+  const texturedItemIds = [
+    'item-wood-table-textured',
+    'item-marble-counter',
+    'item-persian-rug',
+    'item-ornate-chest',
+    'item-stone-altar',
+    'item-magic-circle'
+  ];
+
+  texturedItemIds.forEach(id => {
+    const item = AppState.paletteItems.find(i => i.id === id);
+    assert(item, `Default palette must contain textured sample item: ${id}`);
+    assert.strictEqual(item.fillType, 'image', `${id} fillType must be 'image'`);
+    assert(typeof item.imageData === 'string' && item.imageData.length > 0, `${id} must have valid imageData`);
+    assert(item.width > 0 && item.height > 0, `${id} must have non-zero dimensions`);
+  });
+
+  // 3. Test ObjectManager object creation from textured palette item
+  const rugItem = AppState.paletteItems.find(i => i.id === 'item-persian-rug');
+  const initialCount = AppState.objects.length;
+  const rugObj = ObjectManager.createObject(rugItem, 100, 100, false);
+
+  assert.strictEqual(AppState.objects.length, initialCount + 1);
+  assert.strictEqual(rugObj.paletteItemId, 'item-persian-rug');
+  assert.strictEqual(rugObj.fillType, 'image');
+  assert.strictEqual(rugObj.imageData, 'assets/textures/persian_rug.jpg');
+  assert.strictEqual(rugObj.width, 80);
+  assert.strictEqual(rugObj.height, 60);
+
+  // 4. Test transformations on textured object
+  // Center check
+  const center = ObjectManager.getObjectCenter(rugObj);
+  assert.strictEqual(center.x, 140);
+  assert.strictEqual(center.y, 130);
+
+  // Hit test inside and outside
+  assert.strictEqual(ObjectManager.hitTest(rugObj, 140, 130), true, 'Center should be hit');
+  assert.strictEqual(ObjectManager.hitTest(rugObj, 50, 50), false, 'Outside point should not be hit');
+
+  // Rotate 90 degrees
+  ObjectManager.rotateObject(rugObj, true);
+  assert.strictEqual(rugObj.rotation, 90);
+
+  // AABB after 90 degree rotation (width 80, height 60 swapped to width 60, height 80)
+  const aabb = ObjectManager.getAABB(rugObj);
+  assert(Math.abs(aabb.width - 60) < 0.1, `AABB width after rotation should be 60, got ${aabb.width}`);
+  assert(Math.abs(aabb.height - 80) < 0.1, `AABB height after rotation should be 80, got ${aabb.height}`);
+
+  // Move
+  ObjectManager.moveObject(rugObj, 200, 200);
+  assert.strictEqual(rugObj.x, 200);
+  assert.strictEqual(rugObj.y, 200);
+
+  // 5. Test ExportManager SVG export with textured object
+  const svgOutput = ExportManager.exportSVG();
+  assert(svgOutput.includes('<image href="assets/textures/persian_rug.jpg"'), 'SVG export should contain image tag with texture path');
+
+  // 6. Test ObjectManager.preloadPaletteImages does not throw
+  assert.doesNotThrow(() => {
+    ObjectManager.preloadPaletteImages();
+  });
+
+  // Clean up
+  ObjectManager.deleteObject(rugObj.id);
+
+  console.log('✔ Test 27 Passed!\n');
+}
+
 console.log('🎉 All Core Logic Tests Passed Successfully! 🎉');
 
 

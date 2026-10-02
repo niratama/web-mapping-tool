@@ -227,6 +227,57 @@ const AppState = {
         textColor: '#ffffff',
         fontSize: 11
       },
+      {
+        id: 'item-wood-table-textured',
+        name: '高級木製テーブル',
+        group: 'furniture',
+        type: 'object',
+        width: 80,
+        height: 40,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/wood_floor.jpg',
+        color: '#78350f',
+        strokeColor: '#451a03',
+        strokeWidth: 2,
+        text: '木製机',
+        textColor: '#fef3c7',
+        fontSize: 12
+      },
+      {
+        id: 'item-marble-counter',
+        name: '大理石カウンター',
+        group: 'furniture',
+        type: 'object',
+        width: 80,
+        height: 40,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/marble_tile.jpg',
+        color: '#e2e8f0',
+        strokeColor: '#475569',
+        strokeWidth: 2,
+        text: '大理石',
+        textColor: '#0f172a',
+        fontSize: 12
+      },
+      {
+        id: 'item-persian-rug',
+        name: '高級装飾ラグ',
+        group: 'furniture',
+        type: 'object',
+        width: 80,
+        height: 60,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/persian_rug.jpg',
+        color: '#831843',
+        strokeColor: '#701a75',
+        strokeWidth: 1,
+        text: '',
+        textColor: '#ffffff',
+        fontSize: 12
+      },
 
       // Openings (Doors & Windows)
       {
@@ -296,6 +347,57 @@ const AppState = {
         text: '柱',
         textColor: '#ffffff',
         fontSize: 11
+      },
+      {
+        id: 'item-ornate-chest',
+        name: '豪華な装飾宝箱',
+        group: 'dungeon',
+        type: 'object',
+        width: 40,
+        height: 40,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/ornate_chest.jpg',
+        color: '#d97706',
+        strokeColor: '#78350f',
+        strokeWidth: 2,
+        text: '',
+        textColor: '#ffffff',
+        fontSize: 12
+      },
+      {
+        id: 'item-stone-altar',
+        name: '古代ルーン祭壇',
+        group: 'dungeon',
+        type: 'object',
+        width: 60,
+        height: 60,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/stone_altar.jpg',
+        color: '#334155',
+        strokeColor: '#1e293b',
+        strokeWidth: 2,
+        text: '',
+        textColor: '#ffffff',
+        fontSize: 12
+      },
+      {
+        id: 'item-magic-circle',
+        name: '召喚の魔方陣',
+        group: 'dungeon',
+        type: 'object',
+        width: 80,
+        height: 80,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/magic_circle.jpg',
+        color: '#0284c7',
+        strokeColor: '#0369a1',
+        strokeWidth: 2,
+        text: '',
+        textColor: '#ffffff',
+        fontSize: 12
       }
     ];
 
@@ -319,7 +421,20 @@ const AppState = {
         if (raw) {
           const items = JSON.parse(raw);
           if (Array.isArray(items) && items.length > 0) {
-            this.paletteItems = items;
+            const seenIds = new Set();
+            const merged = [];
+            for (const item of items) {
+              if (item && item.id) {
+                merged.push(item);
+                seenIds.add(item.id);
+              }
+            }
+            for (const defItem of this.paletteItems) {
+              if (!seenIds.has(defItem.id)) {
+                merged.push(defItem);
+              }
+            }
+            this.paletteItems = merged;
           }
         }
       }

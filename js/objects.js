@@ -33,8 +33,11 @@ const ObjectManager = {
       zIndex: AppState.objects.length + 1
     };
 
-    // Preload image if applicable
+    // Preload image if applicable (reuse loaded element if available)
     if (obj.fillType === 'image' && obj.imageData) {
+      if (paletteItem.imageElement && paletteItem.imageElement.complete) {
+        obj.imageElement = paletteItem.imageElement;
+      }
       this.loadImage(obj);
     }
 
@@ -44,13 +47,35 @@ const ObjectManager = {
 
   // Cache Image element for rendering
   loadImage(obj) {
-    if (!obj.imageData) return;
+    if (!obj.imageData || typeof Image === 'undefined') return;
     const img = new Image();
     img.src = obj.imageData;
     img.onload = () => {
       obj.imageElement = img;
-      if (window.CanvasManager) CanvasManager.requestRender();
+      if (typeof window !== 'undefined' && window.CanvasManager) CanvasManager.requestRender();
     };
+    if (img.complete) {
+      obj.imageElement = img;
+    }
+  },
+
+  // Preload images for all palette items that have image fill
+  preloadPaletteImages() {
+    if (typeof Image === 'undefined' || !AppState || !AppState.paletteItems) return;
+    for (const item of AppState.paletteItems) {
+      if (item.fillType === 'image' && item.imageData && !item.imageElement) {
+        const img = new Image();
+        img.src = item.imageData;
+        img.onload = () => {
+          item.imageElement = img;
+          if (typeof window !== 'undefined' && window.CanvasManager) CanvasManager.requestRender();
+        };
+        if (img.complete) {
+          item.imageElement = img;
+        }
+        item.imageElement = img;
+      }
+    }
   },
 
   // Get Object Center in World Coordinates
