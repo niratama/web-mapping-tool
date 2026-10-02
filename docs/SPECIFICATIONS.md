@@ -68,8 +68,12 @@ web-mapping-tool/
 ├── index.html                 # メインUI構造、SVGアイコン定義、全モーダルテンプレート
 ├── .nojekyll                  # GitHub Pages での Jekyll ビルドバイパス
 ├── README.md                  # ユーザー向け機能概要・利用方法・ショートカット一覧
+├── assets/
+│   └── textures/              # 高品質リアルシームレステクスチャ画像（木目、石畳、大理石等）
 ├── docs/
-│   └── SPECIFICATIONS.md      # 本ドキュメント（開発者向け詳細仕様書）
+│   ├── SPECIFICATIONS.md      # 本ドキュメント（開発者向け詳細仕様書）
+│   ├── GOOGLE_DRIVE_SETUP.md  # Google Drive OAuth 2.0 クライアント ID 取得手順書
+│   └── DEV_CONVERSATION_HISTORY.md # 開発チャット履歴アーカイブ
 ├── css/
 │   └── style.css              # モダンダークUIスタイルシート、レスポンシブ、ドラッグ操作用CSS
 ├── js/
@@ -79,7 +83,7 @@ web-mapping-tool/
 │   ├── walls.js               # 外周壁自動算出、自由壁、開口部スナップ & 当たり判定
 │   ├── objects.js             # オブジェクト形状、当たり判定、回転中心変換、画像保持
 │   ├── canvas.js              # キャンバスマウス操作、パン・ズーム、ラバーバンド、ドラッグ
-│   ├── renderer.js            # Canvas 2D レンダリングエンジン、床上グリッド、プレビュー
+│   ├── renderer.js            # Canvas 2D レンダリングエンジン、床上グリッド、プレビュー、テクスチャ描画
 │   ├── palette.js             # パレットUI、アイテムCRUD、ライブラリJSON、プロパティ連動
 │   ├── hotbar.js              # 数字キー 1〜0 クイックスロット管理
 │   ├── shortcuts.js           # キーバインド監視、カスタム設定、ESCリセット
@@ -89,7 +93,7 @@ web-mapping-tool/
 │   ├── settings.js            # 環境設定インポート/エクスポート（バックアップ・復元・初期化）
 │   └── app.js                 # アプリケーション初期化、UIバインディング、オーケストレーター
 └── test/
-    ├── logic_test.js          # 全25項目のコアロジック単体テストスイート (Node.js環境)
+    ├── logic_test.js          # 全26項目のコアロジック単体テストスイート (Node.js環境)
     └── dom_integrity_test.js  # HTML ↔ JS 間の DOM ID 整合性検証スクリプト
 ```
 

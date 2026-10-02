@@ -47,6 +47,7 @@ require('../js/grid.js');
 require('../js/walls.js');
 require('../js/objects.js');
 require('../js/color.js');
+require('../js/renderer.js');
 require('../js/export.js');
 require('../js/settings.js');
 require('../js/gdrive.js');
@@ -1095,6 +1096,59 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
   assert.strictEqual(localStorage.getItem('gridmap_custom_colors'), null, 'Reset must clear colors in localStorage');
 
   console.log('✔ Test 25 Passed!\n');
+}
+
+// Test 26: High-Quality Realistic Texture Assets & Renderer
+{
+  console.log('Test 26: High-Quality Realistic Texture Assets & Renderer');
+  const fs = require('fs');
+  const path = require('path');
+
+  // 1. Verify that all 5 asset files exist on disk
+  const textureFiles = [
+    'wood_floor.jpg',
+    'stone_pavement.jpg',
+    'marble_tile.jpg',
+    'dungeon_flagstone.jpg',
+    'tatami_mat.jpg'
+  ];
+
+  textureFiles.forEach(file => {
+    const fullPath = path.join(__dirname, '../assets/textures', file);
+    assert(fs.existsSync(fullPath), `Texture asset ${file} must exist in assets/textures/`);
+    const stat = fs.statSync(fullPath);
+    assert(stat.size > 10000, `Texture file ${file} should have valid image content size`);
+  });
+
+  // 2. Test texture rendering branch in CanvasRenderer
+  assert(typeof CanvasRenderer.renderFloorTexture === 'function', 'renderFloorTexture must be a function');
+  assert(typeof CanvasRenderer.textureCache !== 'undefined', 'textureCache must exist');
+
+  // Mock Canvas context
+  const mockCtx = {
+    save() {},
+    restore() {},
+    beginPath() {},
+    rect() {},
+    clip() {},
+    drawImage() {},
+    strokeRect() {},
+    fillRect() {},
+    stroke() {},
+    moveTo() {},
+    lineTo() {}
+  };
+
+  // Calling with 'none' should return early
+  CanvasRenderer.renderFloorTexture(mockCtx, 0, 0, 40, 'none');
+
+  // Calling with procedural 'wood'
+  CanvasRenderer.renderFloorTexture(mockCtx, 0, 0, 40, 'wood');
+
+  // Calling with image path
+  CanvasRenderer.renderFloorTexture(mockCtx, 0, 0, 40, 'assets/textures/wood_floor.jpg');
+
+  console.log('✔ Test 26 Passed!\n');
 }
 
 console.log('🎉 All Core Logic Tests Passed Successfully! 🎉');

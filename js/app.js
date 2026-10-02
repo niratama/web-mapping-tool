@@ -362,6 +362,7 @@ const App = {
     const textureListContainer = document.getElementById('gdrive-texture-list');
     const btnRefreshTextures = document.getElementById('btn-refresh-gdrive-textures');
     const inputUploadTexture = document.getElementById('input-gdrive-upload-texture');
+    const btnUploadSamples = document.getElementById('btn-gdrive-upload-samples');
 
     // Settings Modal Elements
     const inputClientId = document.getElementById('input-gdrive-client-id');
@@ -677,6 +678,50 @@ const App = {
           console.error('Upload texture failed:', err);
           showGdriveStatus(`アップロードエラー: ${err.message}`, 'error');
           this.showToast(`アップロードに失敗しました: ${err.message}`, 'error');
+        }
+      };
+    }
+
+    if (btnUploadSamples) {
+      btnUploadSamples.onclick = async () => {
+        if (!GoogleDriveManager.isAuthenticated()) {
+          this.showToast('サンプル登録の前に Google でログインしてください', 'warning');
+          return;
+        }
+
+        const samples = [
+          { name: 'wood_floor.jpg', path: 'assets/textures/wood_floor.jpg' },
+          { name: 'stone_pavement.jpg', path: 'assets/textures/stone_pavement.jpg' },
+          { name: 'marble_tile.jpg', path: 'assets/textures/marble_tile.jpg' },
+          { name: 'dungeon_flagstone.jpg', path: 'assets/textures/dungeon_flagstone.jpg' },
+          { name: 'tatami_mat.jpg', path: 'assets/textures/tatami_mat.jpg' }
+        ];
+
+        btnUploadSamples.disabled = true;
+        showGdriveStatus('高品質サンプルテクスチャを Google Drive に一括登録中...');
+        let uploadedCount = 0;
+
+        try {
+          for (const s of samples) {
+            try {
+              const res = await fetch(s.path);
+              if (!res.ok) continue;
+              const blob = await res.blob();
+              await GoogleDriveManager.uploadTextureFile(s.name, blob);
+              uploadedCount++;
+            } catch (itemErr) {
+              console.warn(`Failed to upload ${s.name}:`, itemErr);
+            }
+          }
+          showGdriveStatus('');
+          this.showToast(`サンプルテクスチャ ${uploadedCount} 件を Google Drive に登録しました！`, 'success');
+          renderTextureList();
+        } catch (err) {
+          console.error('Upload samples failed:', err);
+          showGdriveStatus(`サンプル登録エラー: ${err.message}`, 'error');
+          this.showToast(`サンプル登録に失敗しました: ${err.message}`, 'error');
+        } finally {
+          btnUploadSamples.disabled = false;
         }
       };
     }

@@ -59,12 +59,42 @@ const CanvasRenderer = {
     }
   },
 
-  // Procedural Floor Texture Renderer
+  // Texture Image Cache
+  textureCache: new Map(),
+
+  loadTextureImage(src) {
+    if (this.textureCache.has(src)) return this.textureCache.get(src);
+    if (typeof Image === 'undefined') return null;
+
+    const img = new Image();
+    img.src = src;
+    this.textureCache.set(src, img);
+    img.onload = () => {
+      if (typeof CanvasManager !== 'undefined' && CanvasManager.requestRender) {
+        CanvasManager.requestRender();
+      }
+    };
+    return img;
+  },
+
+  // Procedural & Image Floor Texture Renderer
   renderFloorTexture(ctx, x, y, size, textureType) {
+    if (!textureType || textureType === 'none') return;
+
     ctx.save();
     ctx.beginPath();
     ctx.rect(x, y, size, size);
     ctx.clip(); // Clip to cell
+
+    // 1. Check if texture is an image (DataURL, assets path, or http URL)
+    if (textureType.startsWith('data:image/') || textureType.startsWith('assets/') || textureType.startsWith('http')) {
+      const img = this.loadTextureImage(textureType);
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(img, x, y, size, size);
+      }
+      ctx.restore();
+      return;
+    }
 
     if (textureType === 'wood') {
       // Wood plank pattern

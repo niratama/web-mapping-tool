@@ -301,12 +301,21 @@
           <div class="prop-row" style="margin-bottom: 6px;">
             <label>床テクスチャ:</label>
             <select id="paint-floor-texture" class="prop-input">
-              <option value="none">単色</option>
-              <option value="wood">木目フローリング</option>
-              <option value="tile">スクエアタイル</option>
-              <option value="stone">石畳</option>
-              <option value="tatami">畳</option>
-              <option value="carpet">カーペット</option>
+              <optgroup label="高品質リアルテクスチャ">
+                <option value="assets/textures/wood_floor.jpg">🪵 フローリング (木目)</option>
+                <option value="assets/textures/stone_pavement.jpg">🧱 石畳 (舗装路)</option>
+                <option value="assets/textures/marble_tile.jpg">🏛️ 大理石タイル</option>
+                <option value="assets/textures/dungeon_flagstone.jpg">🏰 ダンジョン敷石</option>
+                <option value="assets/textures/tatami_mat.jpg">🍵 畳 (和室)</option>
+              </optgroup>
+              <optgroup label="シンプル線画 (軽量)">
+                <option value="none" selected>単色 (テクスチャなし)</option>
+                <option value="wood">木目フローリング (線画)</option>
+                <option value="tile">スクエアタイル (線画)</option>
+                <option value="stone">石畳 (線画)</option>
+                <option value="tatami">畳 (線画)</option>
+                <option value="carpet">カーペット (線画)</option>
+              </optgroup>
             </select>
           </div>
 
@@ -743,6 +752,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 6px 0;">
             <span style="font-size: 0.8rem; color: var(--text-muted);">GridMapStudio/Textures/ 内の画像:</span>
             <div style="display: flex; gap: 6px;">
+              <button class="btn-secondary" id="btn-gdrive-upload-samples" style="padding: 2px 8px; font-size: 0.75rem;" title="内蔵の高品質サンプルテクスチャ5種を Google Drive に一括登録">📦 サンプル登録</button>
               <label class="btn-secondary" style="padding: 2px 8px; font-size: 0.75rem; cursor: pointer;">
                 ＋ 画像を追加
                 <input type="file" id="input-gdrive-upload-texture" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
