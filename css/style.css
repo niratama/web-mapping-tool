@@ -57,6 +57,19 @@ header {
   color: var(--text-main);
 }
 
+.version-badge {
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background-color: var(--bg-hover);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  letter-spacing: 0.04em;
+  user-select: none;
+  line-height: 1.2;
+}
+
 .brand-icon {
   width: 24px;
   height: 24px;

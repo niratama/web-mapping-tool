@@ -3,6 +3,9 @@
  */
 
 const AppState = {
+  // Application Version
+  version: '1.1.0',
+
   // Grid Configuration
   grid: {
     visualCellSize: 40,  // Base visual grid size in px
@@ -336,7 +339,7 @@ const AppState = {
   // Serialization for Snapshot & Saving
   serializeMapData() {
     return {
-      version: '1.0.0',
+      version: this.version || '1.1.0',
       timestamp: Date.now(),
       grid: { ...this.grid },
       floors: Array.from(this.floors.entries()),

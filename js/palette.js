@@ -824,7 +824,7 @@ const PaletteManager = {
     const items = AppState.paletteItems.filter(i => i.group === this.activeGroupId);
 
     const libData = {
-      version: '1.0.0',
+      version: (typeof AppState !== 'undefined' && AppState.version) ? AppState.version : '1.1.0',
       type: 'gridmap-library',
       group: currentGroup,
       items
