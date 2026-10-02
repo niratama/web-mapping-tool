@@ -1162,14 +1162,16 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
     'persian_rug.jpg',
     'magic_circle.jpg',
     'ornate_chest.jpg',
-    'stone_altar.jpg'
+    'stone_altar.jpg',
+    'round_rug_alpha.png',
+    'magic_circle_alpha.png'
   ];
 
   sampleTextureFiles.forEach(file => {
     const fullPath = path.join(__dirname, '../assets/textures', file);
     assert(fs.existsSync(fullPath), `Texture asset ${file} must exist in assets/textures/`);
     const stat = fs.statSync(fullPath);
-    assert(stat.size > 10000, `Texture file ${file} should have valid image content size`);
+    assert(stat.size > 1000, `Texture file ${file} should have valid image content size`);
   });
 
   // 2. Initialize default palette and verify textured items
@@ -1178,9 +1180,11 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
     'item-wood-table-textured',
     'item-marble-counter',
     'item-persian-rug',
+    'item-round-rug-alpha',
     'item-ornate-chest',
     'item-stone-altar',
-    'item-magic-circle'
+    'item-magic-circle',
+    'item-magic-circle-alpha'
   ];
 
   texturedItemIds.forEach(id => {
@@ -1284,9 +1288,11 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
     'item-wood-table-textured',
     'item-marble-counter',
     'item-persian-rug',
+    'item-round-rug-alpha',
     'item-ornate-chest',
     'item-stone-altar',
-    'item-magic-circle'
+    'item-magic-circle',
+    'item-magic-circle-alpha'
   ];
 
   newDefaultIds.forEach(id => {

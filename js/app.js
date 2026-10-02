@@ -698,7 +698,9 @@ const App = {
           { name: 'persian_rug.jpg', path: 'assets/textures/persian_rug.jpg' },
           { name: 'magic_circle.jpg', path: 'assets/textures/magic_circle.jpg' },
           { name: 'ornate_chest.jpg', path: 'assets/textures/ornate_chest.jpg' },
-          { name: 'stone_altar.jpg', path: 'assets/textures/stone_altar.jpg' }
+          { name: 'stone_altar.jpg', path: 'assets/textures/stone_altar.jpg' },
+          { name: 'round_rug_alpha.png', path: 'assets/textures/round_rug_alpha.png' },
+          { name: 'magic_circle_alpha.png', path: 'assets/textures/magic_circle_alpha.png' }
         ];
 
         btnUploadSamples.disabled = true;

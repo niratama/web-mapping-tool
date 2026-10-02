@@ -207,14 +207,19 @@ const ExportManager = {
           ctx.fillStyle = obj.color || '#3b82f6';
           ctx.fillRect(-halfW, -halfH, obj.width, obj.height);
         }
-        ctx.strokeStyle = obj.strokeColor || '#1d4ed8';
-        ctx.lineWidth = obj.strokeWidth || 1;
-        ctx.strokeRect(-halfW, -halfH, obj.width, obj.height);
+        const strokeW = (typeof obj.strokeWidth === 'number') ? obj.strokeWidth : 1;
+        if (strokeW > 0 && obj.strokeColor && obj.strokeColor !== 'transparent') {
+          ctx.strokeStyle = obj.strokeColor;
+          ctx.lineWidth = strokeW;
+          ctx.strokeRect(-halfW, -halfH, obj.width, obj.height);
+        }
       } else if (obj.shapeType === 'cells' && obj.cells) {
         const rows = obj.cells.length;
         const cols = obj.cells[0].length;
         const cW = obj.width / cols;
         const cH = obj.height / rows;
+        const strokeW = (typeof obj.strokeWidth === 'number') ? obj.strokeWidth : 1;
+        const hasStroke = strokeW > 0 && obj.strokeColor && obj.strokeColor !== 'transparent';
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
             if (obj.cells[r][c] === 1) {
@@ -222,9 +227,11 @@ const ExportManager = {
               const cy = -halfH + r * cH;
               ctx.fillStyle = obj.color || '#8b5cf6';
               ctx.fillRect(cx, cy, cW, cH);
-              ctx.strokeStyle = obj.strokeColor || '#6d28d9';
-              ctx.lineWidth = obj.strokeWidth || 1;
-              ctx.strokeRect(cx, cy, cW, cH);
+              if (hasStroke) {
+                ctx.strokeStyle = obj.strokeColor;
+                ctx.lineWidth = strokeW;
+                ctx.strokeRect(cx, cy, cW, cH);
+              }
             }
           }
         }

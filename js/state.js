@@ -278,6 +278,23 @@ const AppState = {
         textColor: '#ffffff',
         fontSize: 12
       },
+      {
+        id: 'item-round-rug-alpha',
+        name: '円形装飾ラグ (透過)',
+        group: 'furniture',
+        type: 'object',
+        width: 80,
+        height: 80,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/round_rug_alpha.png',
+        color: 'transparent',
+        strokeColor: 'transparent',
+        strokeWidth: 0,
+        text: '',
+        textColor: '#ffffff',
+        fontSize: 12
+      },
 
       // Openings (Doors & Windows)
       {
@@ -395,6 +412,23 @@ const AppState = {
         color: '#0284c7',
         strokeColor: '#0369a1',
         strokeWidth: 2,
+        text: '',
+        textColor: '#ffffff',
+        fontSize: 12
+      },
+      {
+        id: 'item-magic-circle-alpha',
+        name: '召喚の魔方陣 (透過)',
+        group: 'dungeon',
+        type: 'object',
+        width: 80,
+        height: 80,
+        shapeType: 'rect',
+        fillType: 'image',
+        imageData: 'assets/textures/magic_circle_alpha.png',
+        color: 'transparent',
+        strokeColor: 'transparent',
+        strokeWidth: 0,
         text: '',
         textColor: '#ffffff',
         fontSize: 12
