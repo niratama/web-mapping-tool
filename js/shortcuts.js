@@ -284,11 +284,21 @@ const ShortcutManager = {
     const btnReset = document.getElementById('btn-reset-shortcuts');
     if (btnReset) {
       btnReset.onclick = () => {
-        this.bindings = JSON.parse(JSON.stringify(this.defaultBindings));
-        this.saveBindings();
-        this.renderModalList();
+        this.resetDefaults();
         if (window.App) App.showToast('ショートカットを初期値に戻しました');
       };
+    }
+  },
+
+  resetDefaults() {
+    this.bindings = JSON.parse(JSON.stringify(this.defaultBindings));
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('gridmap_shortcuts');
+      }
+    } catch (e) {}
+    if (typeof document !== 'undefined' && document.getElementById('shortcuts-list')) {
+      this.renderModalList();
     }
   }
 };

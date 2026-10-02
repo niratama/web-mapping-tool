@@ -7,19 +7,22 @@
 
 ## [Unreleased]
 
-### 計画中 / TODO (Planned)
+### 追加 (Added)
 - **Google Drive クラウド連携 (v1.2.0)**:
-  - サーバーサイド不要の完全クライアントサイド認証（Google Identity Services: GIS）。
-  - 専用フォルダ UI 方式（Google Drive 直下に `GridMapStudio/` を作成し、自前モーダルでマップ保存・読込・削除）。
+  - サーバーサイド不要の完全クライアントサイド認証（Google Identity Services: GIS SDK の動的遅延読み込み）。
+  - 専用フォルダ UI（Google Drive 直下に `GridMapStudio/` および `Textures/` を作成し、自前モーダルでマップ保存・読込・削除）。
   - ハイブリッド接続設定（本番公式 Client ID ＋ localhost/セルフホスト用カスタム ID 入力対応）。
-  - Google Drive からのテクスチャ画像（PNG/JPG等）読み込み・適用・マップ JSON 内包。
-  - OAuth Client ID 取得ガイドの策定済み（[`docs/GOOGLE_DRIVE_SETUP.md`](docs/GOOGLE_DRIVE_SETUP.md)）。
+  - Google Drive からのテクスチャ画像（PNG/JPG/SVG/WebP）読み込み・適用・マップ JSON 内包。
+  - OAuth Client ID 取得ガイド（[`docs/GOOGLE_DRIVE_SETUP.md`](docs/GOOGLE_DRIVE_SETUP.md)）の最新 Google Auth Platform 対応。
+- **環境設定のインポート / エクスポート (バックアップ & 復元) (v1.2.0)**:
+  - グリッド設定、床・壁ペイント設定、キーバインド、お気に入り色、自作パーツ、ホットバー登録等を単一の `gridmap_settings_*.json` にまとめてワンクリック保存・復元。
+  - 選択的インポート機能（チェックボックスにより復元対象カテゴリを個別に選択可能）。
+  - ワンクリック設定初期化（工場出荷状態へのリセット）対応。
+
+### 計画中 / TODO (Planned)
 - **高品質サンプルテクスチャアセットの拡充 (v1.2.0)**:
   - AI生成による真上見下ろし（トップダウン）シームレステクスチャの配備（木目フローリング、石畳、大理石タイル、畳、レンガ壁等）。
   - `assets/textures/` への配置と標準パレットプリセット化、Google Drive 初期サンプル提供。
-- **設定のインポート / エクスポート (バックアップ & 共有) (v1.2.0)**:
-  - グリッド設定、キーバインド、カスタム色、8x8自作パーツ、ホットバー登録等を単一の `gridmap_settings.json` にまとめて保存・復元。
-  - PC・ブラウザ移行時の環境復元、キャッシュクリア対策、チーム配布対応。
 
 ---
 

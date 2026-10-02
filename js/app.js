@@ -11,6 +11,7 @@ const App = {
     HotbarManager.init();
     ShortcutManager.init();
     ExportManager.init();
+    if (window.SettingsManager) SettingsManager.init();
     if (window.ColorManager) ColorManager.init();
 
     // 2. Bind Toolbar & App Controls

@@ -84,9 +84,12 @@ web-mapping-tool/
 │   ├── hotbar.js              # 数字キー 1〜0 クイックスロット管理
 │   ├── shortcuts.js           # キーバインド監視、カスタム設定、ESCリセット
 │   ├── color.js               # 厳選カラーパレット、カスタム色永続化、高精度スポイト
-│   └── export.js              # PNG / SVG エクスポート、JSON 保存 / 読み込み
+│   ├── export.js              # PNG / SVG エクスポート、JSON 保存 / 読み込み
+│   ├── gdrive.js              # Google Drive 連携（OAuth 2.0 GIS、マップ・テクスチャ同期）
+│   ├── settings.js            # 環境設定インポート/エクスポート（バックアップ・復元・初期化）
+│   └── app.js                 # アプリケーション初期化、UIバインディング、オーケストレーター
 └── test/
-    ├── logic_test.js          # 全23項目のコアロジック単体テストスイート (Node.js環境)
+    ├── logic_test.js          # 全25項目のコアロジック単体テストスイート (Node.js環境)
     └── dom_integrity_test.js  # HTML ↔ JS 間の DOM ID 整合性検証スクリプト
 ```
 
@@ -102,10 +105,12 @@ web-mapping-tool/
 | [renderer.js](file:///home/developer/projects/web-mapping-tool/js/renderer.js) | `CanvasRenderer` | レイヤー順序に従う Canvas 2D 描画、床上グリッド線、開口部シンボル・壁切り欠き、ゴースト配置プレビュー（回転・反転・テキスト追従） | `AppState`, `GridManager`, `WallManager`, `ObjectManager` |
 | [palette.js](file:///home/developer/projects/web-mapping-tool/js/palette.js) | `PaletteManager` | パレットタブ/カード描画、アイテム編集・複製・削除モーダル、可変セルブロック（最大8x8）、プロパティパネル動的生成、Prefab 保存 | `AppState`, `CanvasManager`, `CanvasRenderer`, `ColorManager` |
 | [color.js](file:///home/developer/projects/web-mapping-tool/js/color.js) | `ColorManager` | 厳選カラーパレットスウォッチ生成、カスタム色登録（`+`）/削除（右クリック）、LocalStorage 永続化、Canvas 拡大プレビュー付きスポイト | `AppState`, `CanvasRenderer`, `ObjectManager`, `WallManager` |
-| [shortcuts.js](file:///home/developer/projects/web-mapping-tool/js/shortcuts.js) | `ShortcutManager` | キーイベントリスナー、キーバインド変更モーダルと LocalStorage 同期、ESC キーによる全選択解除 & 選択ツール復帰 | `AppState`, `App`, `CanvasManager`, `HotbarManager`, `PaletteManager` |
+| [shortcuts.js](file:///home/developer/projects/web-mapping-tool/js/shortcuts.js) | `ShortcutManager` | キーイベントリスナー、キーバインド変更モーダルと LocalStorage 同期、ESC キーによる全選択解除 & 選択ツール復帰、初期化リセット | `AppState`, `App`, `CanvasManager`, `HotbarManager`, `PaletteManager` |
 | [hotbar.js](file:///home/developer/projects/web-mapping-tool/js/hotbar.js) | `HotbarManager` | 画面下部クイックスロット 1〜10 の描画、DnD 登録、右クリック登録、数字キー連動、開口部/オブジェクトの配置モード起動 | `AppState`, `App`, `PaletteManager` |
 | [export.js](file:///home/developer/projects/web-mapping-tool/js/export.js) | `ExportManager` | 全要素のバウンディングボックス（AABB）＋マージン自動算出、PNG 画像ダウンロード、SVG ベクタ文字列生成、JSON ダウンロード/読込 | `AppState`, `GridManager`, `CanvasRenderer`, `WallManager`, `ObjectManager` |
-| [app.js](file:///home/developer/projects/web-mapping-tool/js/app.js) | `App` | アプリケーション初期化オーケストレーター、ツールバーボタン切替、新規作成/設定モーダル結線、定期自動保存タイマー（5秒） | 全モジュール |
+| [gdrive.js](file:///home/developer/projects/web-mapping-tool/js/gdrive.js) | `GoogleDriveManager` | Google Identity Services (GIS) による完全クライアントサイド認証、専用フォルダ（GridMapStudio/）自動管理、マップ/テクスチャ同期 | `AppState` |
+| [settings.js](file:///home/developer/projects/web-mapping-tool/js/settings.js) | `SettingsManager` | グリッド、ショートカット、カスタムカラー、パレット、ホットバー等の包括的 JSON エクスポート、選択的インポート、初期化リセット | `AppState`, `ShortcutManager`, `ColorManager`, `PaletteManager`, `HotbarManager`, `GoogleDriveManager` |
+| [app.js](file:///home/developer/projects/web-mapping-tool/js/app.js) | `App` | アプリケーション初期化オーケストレーター、ツールバーボタン切替、新規作成/設定モーダル結線、定期自動保存タイマー（2秒） | 全モジュール |
 
 ---
 

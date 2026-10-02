@@ -132,6 +132,14 @@
         </svg>
         <span>キー設定</span>
       </button>
+
+      <button class="tool-btn" id="btn-settings-manager" title="設定のインポート / エクスポート (バックアップ・復元)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>環境設定</span>
+      </button>
     </div>
 
     <!-- Export & File Actions -->
@@ -785,6 +793,75 @@
     </div>
   </div>
 
+  <!-- Modal 7: Settings Manager (Backup & Restore) -->
+  <div class="modal-overlay" id="modal-settings-manager">
+    <div class="modal-card" style="width: 520px; max-width: 95vw;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>設定のバックアップと復元</span>
+        </div>
+        <button class="modal-close" data-close="modal-settings-manager">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px; gap: 16px;">
+        <!-- Export Section -->
+        <div class="settings-card-section">
+          <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>📤</span> 設定のエクスポート (保存)
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
+            現在のグリッド設定、キーバインド、自作カラー、追加パーツ、ホットバー登録等を 1 つの JSON ファイルとして書き出します。別の PC やブラウザへの移行、設定の共有に便利です。
+          </div>
+          <button class="btn-primary" id="btn-export-settings" style="width: 100%;">設定ファイル (JSON) をダウンロード</button>
+        </div>
+
+        <!-- Import Section -->
+        <div class="settings-card-section">
+          <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>📥</span> 設定のインポート (復元)
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
+            以前保存した設定ファイル（<code>gridmap_settings_*.json</code>）を読み込んで環境を復元します。
+          </div>
+          <button class="btn-secondary" id="btn-select-settings-file" style="width: 100%; margin-bottom: 8px;">📂 設定ファイルを選択</button>
+          <input type="file" id="input-import-settings" accept=".json" style="display: none;">
+
+          <!-- Staged Import Preview -->
+          <div id="settings-import-preview-box" style="display: none; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-top: 8px;">
+            <div id="settings-import-meta" style="font-size: 0.78rem; color: var(--accent-color); font-weight: 600; margin-bottom: 8px;"></div>
+            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 6px;">復元する項目を選択:</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.8rem;">
+              <label><input type="checkbox" id="chk-import-grid" checked> グリッド・描画設定</label>
+              <label><input type="checkbox" id="chk-import-paint" checked> 床・壁ペイント設定</label>
+              <label><input type="checkbox" id="chk-import-shortcuts" checked> キーボード操作設定</label>
+              <label><input type="checkbox" id="chk-import-colors" checked> お気に入りカラー</label>
+              <label><input type="checkbox" id="chk-import-palette" checked> 自作パーツ・パレット</label>
+              <label><input type="checkbox" id="chk-import-hotbar" checked> ホットバー登録</label>
+            </div>
+            <button class="btn-primary" id="btn-apply-import-settings" style="width: 100%; margin-top: 10px;">選択した設定を適用する</button>
+          </div>
+        </div>
+
+        <!-- Factory Reset Section -->
+        <div class="settings-card-section" style="border-top: 1px solid var(--border-color); padding-top: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; font-size: 0.85rem; color: #ef4444;">⚠️ 設定の初期化</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">すべてのカスタマイズ設定を工場出荷時の初期値に戻します。</div>
+            </div>
+            <button class="btn-secondary" id="btn-reset-all-settings" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4); padding: 4px 10px; font-size: 0.78rem;">初期化</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="modal-settings-manager">閉じる</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Application Scripts (Ordered dependency) -->
   <script src="js/state.js"></script>
   <script src="js/grid.js"></script>
@@ -796,6 +873,7 @@
   <script src="js/hotbar.js"></script>
   <script src="js/shortcuts.js"></script>
   <script src="js/export.js"></script>
+  <script src="js/settings.js"></script>
   <script src="js/gdrive.js"></script>
   <script src="js/canvas.js"></script>
   <script src="js/app.js"></script>

@@ -48,6 +48,7 @@ require('../js/walls.js');
 require('../js/objects.js');
 require('../js/color.js');
 require('../js/export.js');
+require('../js/settings.js');
 require('../js/gdrive.js');
 require('../js/palette.js');
 require('../js/shortcuts.js');
@@ -1000,6 +1001,100 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
   assert.strictEqual(AppState.currentDriveFile, null, 'clearLocalStorage must reset currentDriveFile');
 
   console.log('✔ Test 24 Passed!\n');
+}
+
+// Test 25: Settings Manager (Export, Import, Selective Apply & Factory Reset)
+{
+  console.log('Test 25: Settings Manager (Export, Import, Selective Apply & Factory Reset)');
+  assert(typeof SettingsManager !== 'undefined', 'SettingsManager should be defined');
+
+  // 1. Export settings verification
+  const exported = SettingsManager.exportSettingsObject();
+  assert.strictEqual(exported.app, 'GridMap Studio');
+  assert.strictEqual(exported.type, 'settings');
+  assert(exported.settings, 'Exported data must have settings object');
+  assert(exported.settings.grid, 'Exported settings must include grid');
+  assert(exported.settings.shortcuts, 'Exported settings must include shortcuts');
+  assert(exported.settings.customColors, 'Exported settings must include customColors');
+  assert(Array.isArray(exported.settings.hotbar), 'Exported settings must include hotbar');
+
+  // 2. Parse JSON validation
+  const validJson = JSON.stringify(exported);
+  const parsed = SettingsManager.parseSettingsFile(validJson);
+  assert.strictEqual(parsed.metadata.app, 'GridMap Studio');
+  assert(parsed.settings.grid);
+
+  assert.throws(() => {
+    SettingsManager.parseSettingsFile('INVALID_JSON{{{');
+  }, /JSONの構文解析に失敗しました/);
+
+  // 3. Selective Import & Application
+  const testSettings = {
+    grid: {
+      visualCellSize: 80,
+      subdivisions: 4,
+      visualColor: '#ff0000',
+      snapColor: '#00ff00',
+      showSnap: false,
+      showOnFloor: false
+    },
+    paintStyle: {
+      floorColor: '#123456',
+      floorTexture: 'wood',
+      wallColor: '#654321',
+      wallTexture: 'brick',
+      autoWall: false
+    },
+    shortcuts: {
+      action_select: 'KeyX'
+    },
+    customColors: {
+      floor: ['#111111', '#222222']
+    },
+    customPalette: [
+      {
+        id: 'test-item-settings',
+        name: '設定テスト棚',
+        group: 'furniture',
+        type: 'object',
+        width: 40,
+        height: 40
+      }
+    ],
+    hotbar: ['test-item-settings', null, null]
+  };
+
+  // Import all
+  const applyRes = SettingsManager.applySettings(testSettings);
+  assert.strictEqual(applyRes.success, true);
+  assert.strictEqual(AppState.grid.visualCellSize, 80);
+  assert.strictEqual(AppState.grid.subdivisions, 4);
+  assert.strictEqual(AppState.grid.showOnFloor, false);
+  assert.strictEqual(AppState.paintStyle.floorColor, '#123456');
+  assert.strictEqual(AppState.paintStyle.autoWall, false);
+  assert(AppState.paletteItems.some(i => i.id === 'test-item-settings'));
+  assert.strictEqual(AppState.hotbar[0]?.id, 'test-item-settings');
+
+  // Selective import (skip grid, only change paintStyle)
+  const partialSettings = {
+    grid: { visualCellSize: 120 },
+    paintStyle: { floorColor: '#abcdef' }
+  };
+  SettingsManager.applySettings(partialSettings, { grid: false, paintStyle: true });
+  assert.strictEqual(AppState.grid.visualCellSize, 80, 'Grid should NOT be changed when grid=false');
+  assert.strictEqual(AppState.paintStyle.floorColor, '#abcdef', 'paintStyle should be updated when paintStyle=true');
+
+  // 4. Factory Reset All Settings
+  SettingsManager.resetAllSettings();
+  assert.strictEqual(AppState.grid.visualCellSize, 40, 'Reset must restore default visualCellSize 40');
+  assert.strictEqual(AppState.grid.subdivisions, 2, 'Reset must restore default subdivisions 2');
+  assert.strictEqual(AppState.grid.showOnFloor, true, 'Reset must restore showOnFloor true');
+  assert.strictEqual(AppState.paintStyle.floorColor, '#e2e8f0', 'Reset must restore default floor color');
+  assert.strictEqual(AppState.paintStyle.autoWall, true, 'Reset must restore default autoWall true');
+  assert.strictEqual(localStorage.getItem('gridmap_shortcuts'), null, 'Reset must clear shortcuts in localStorage');
+  assert.strictEqual(localStorage.getItem('gridmap_custom_colors'), null, 'Reset must clear colors in localStorage');
+
+  console.log('✔ Test 25 Passed!\n');
 }
 
 console.log('🎉 All Core Logic Tests Passed Successfully! 🎉');
