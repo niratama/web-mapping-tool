@@ -1242,6 +1242,65 @@ console.log('=== Running GridMap Studio Core Logic Tests ===\n');
   console.log('✔ Test 27 Passed!\n');
 }
 
+// Test 28: Reload / Autosave Restoration Palette Migration
+{
+  console.log('Test 28: Reload / Autosave Restoration Palette Migration');
+
+  // Simulate an older version of autosave containing only basic items and a custom user item
+  const legacySaveData = {
+    version: '1.0.0',
+    timestamp: Date.now() - 100000,
+    grid: { visualCellSize: 40, subdivisions: 2, visualColor: '#334155', snapColor: '#1e293b', showSnap: true, showOnFloor: true },
+    floors: [['0,0', { color: '#e2e8f0', texture: 'none' }]],
+    walls: [],
+    openings: [],
+    objects: [],
+    paletteGroups: [
+      { id: 'basic', name: '基本パーツ' },
+      { id: 'furniture', name: '家具・備品' },
+      { id: 'openings', name: 'ドア・窓' },
+      { id: 'dungeon', name: 'ダンジョン' },
+      { id: 'custom', name: 'カスタム' }
+    ],
+    paletteItems: [
+      { id: 'item-rect-1x1', name: 'ブロック 1x1', group: 'basic', type: 'object', width: 20, height: 20, shapeType: 'rect', fillType: 'color', color: '#3b82f6', strokeColor: '#1d4ed8' },
+      { id: 'custom-user-chair', name: '自作マイチェア', group: 'custom', type: 'object', width: 20, height: 20, shapeType: 'rect', fillType: 'color', color: '#ff0000', strokeColor: '#990000' }
+    ]
+  };
+
+  localStorage.setItem('gridmap_autosave', JSON.stringify(legacySaveData));
+
+  // Simulate browser reload by calling AppState.init()
+  const restored = AppState.init();
+  assert.strictEqual(restored, true, 'Should successfully restore legacy autosave data');
+
+  // Verify that custom item from legacy save was preserved
+  const customItem = AppState.paletteItems.find(i => i.id === 'custom-user-chair');
+  assert(customItem, 'Custom user item from legacy save must be preserved');
+  assert.strictEqual(customItem.name, '自作マイチェア');
+
+  // Verify that ALL new textured default items were successfully migrated and merged
+  const newDefaultIds = [
+    'item-wood-table-textured',
+    'item-marble-counter',
+    'item-persian-rug',
+    'item-ornate-chest',
+    'item-stone-altar',
+    'item-magic-circle'
+  ];
+
+  newDefaultIds.forEach(id => {
+    const found = AppState.paletteItems.find(i => i.id === id);
+    assert(found, `Newly introduced default item ${id} must exist in palette after reload restoration`);
+    assert.strictEqual(found.fillType, 'image');
+  });
+
+  // Clean up
+  localStorage.removeItem('gridmap_autosave');
+
+  console.log('✔ Test 28 Passed!\n');
+}
+
 console.log('🎉 All Core Logic Tests Passed Successfully! 🎉');
 
 

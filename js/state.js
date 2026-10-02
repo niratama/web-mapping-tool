@@ -115,9 +115,9 @@ const AppState = {
     }
   },
 
-  // Initialize Predefined Palette Items
-  initDefaultPalette() {
-    this.paletteItems = [
+  // Get All Predefined Palette Items
+  getDefaultPaletteItems() {
+    return [
       // Basic shapes
       {
         id: 'item-rect-1x1',
@@ -400,7 +400,11 @@ const AppState = {
         fontSize: 12
       }
     ];
+  },
 
+  // Initialize Predefined Palette Items
+  initDefaultPalette() {
+    this.paletteItems = this.getDefaultPaletteItems();
     this.loadCustomPaletteItems();
   },
 
@@ -421,6 +425,7 @@ const AppState = {
         if (raw) {
           const items = JSON.parse(raw);
           if (Array.isArray(items) && items.length > 0) {
+            const defaults = this.getDefaultPaletteItems();
             const seenIds = new Set();
             const merged = [];
             for (const item of items) {
@@ -429,7 +434,7 @@ const AppState = {
                 seenIds.add(item.id);
               }
             }
-            for (const defItem of this.paletteItems) {
+            for (const defItem of defaults) {
               if (!seenIds.has(defItem.id)) {
                 merged.push(defItem);
               }
@@ -503,7 +508,21 @@ const AppState = {
       this.paletteGroups = data.paletteGroups;
     }
     if (data.paletteItems && Array.isArray(data.paletteItems)) {
-      this.paletteItems = data.paletteItems;
+      const defaults = this.getDefaultPaletteItems ? this.getDefaultPaletteItems() : [];
+      const seenIds = new Set();
+      const merged = [];
+      for (const item of data.paletteItems) {
+        if (item && item.id) {
+          merged.push(item);
+          seenIds.add(item.id);
+        }
+      }
+      for (const defItem of defaults) {
+        if (!seenIds.has(defItem.id)) {
+          merged.push(defItem);
+        }
+      }
+      this.paletteItems = merged;
     }
 
     this.selectedObjectIds.clear();
@@ -514,6 +533,9 @@ const AppState = {
     if (window.PaletteManager) {
       if (PaletteManager.renderTabs) PaletteManager.renderTabs();
       if (PaletteManager.renderItems) PaletteManager.renderItems();
+    }
+    if (typeof ObjectManager !== 'undefined' && ObjectManager.preloadPaletteImages) {
+      ObjectManager.preloadPaletteImages();
     }
     if (window.HotbarManager && HotbarManager.render) HotbarManager.render();
     if (window.CanvasManager && CanvasManager.requestRender) CanvasManager.requestRender();
